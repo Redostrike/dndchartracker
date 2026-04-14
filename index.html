@@ -7,880 +7,447 @@
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap" rel="stylesheet">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <style>
-    /* ─── TOKENS ──────────────────────────────────────── */
-    :root {
-      --bg:       #0c0e16;
-      --surface:  #13161f;
-      --card:     #1a1e2b;
-      --border:   #2a2e3e;
-      --gold:     #c9992a;
-      --gold-dim: #7a5a14;
-      --ember:    #c0421a;
-      --heal:     #2a7a4f;
-      --text:     #e4d9c8;
-      --muted:    #6a6458;
-      --danger:   #8b1a1a;
-      --info:     #1a4a7a;
-      --radius:   12px;
-      --rad-sm:   8px;
-      --rad-xs:   6px;
-    }
+    :root{--bg:#0c0e16;--surface:#13161f;--card:#1a1e2b;--border:#2a2e3e;--gold:#c9992a;--gold-dim:#7a5a14;--ember:#c0421a;--heal:#2a7a4f;--text:#e4d9c8;--muted:#6a6458;--danger:#8b1a1a;--info:#1a4a7a;--radius:12px;--rsm:8px;--rxs:6px}
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html,body{height:100%;overflow:hidden}
+    body{font-family:'Crimson Pro',Georgia,serif;background:var(--bg);color:var(--text);font-size:16px;line-height:1.5;-webkit-font-smoothing:antialiased}
+    .screen{position:fixed;inset:0;display:flex;flex-direction:column;overflow:hidden;opacity:0;pointer-events:none;transition:opacity .2s}
+    .screen.active{opacity:1;pointer-events:all}
+    .scroll-body{flex:1;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;padding:14px 14px 120px}
+    .scroll-body::-webkit-scrollbar{width:3px}
+    .scroll-body::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+    /* topbar */
+    .topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:12px 14px;display:flex;align-items:center;gap:10px;flex-shrink:0}
+    .topbar-title{font-family:'Cinzel',serif;font-size:1rem;font-weight:700;color:var(--gold);flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .topbar-sub{font-size:.75rem;color:var(--muted);font-style:italic}
+    .btn-back{background:transparent;border:none;color:var(--gold);font-size:1.3rem;cursor:pointer;padding:4px 6px;-webkit-tap-highlight-color:transparent;flex-shrink:0}
+    /* buttons */
+    .btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:11px 18px;border-radius:var(--rsm);border:none;cursor:pointer;font-family:'Cinzel',serif;font-size:.78rem;font-weight:600;letter-spacing:.05em;transition:filter .15s,transform .1s;-webkit-tap-highlight-color:transparent;white-space:nowrap}
+    .btn:active{transform:scale(.95)}
+    .btn-gold{background:var(--gold);color:#0c0e16}.btn-ghost{background:transparent;border:1px solid var(--border);color:var(--text)}.btn-ember{background:var(--ember);color:#fff}.btn-heal{background:var(--heal);color:#fff}.btn-danger{background:var(--danger);color:#fff}.btn-info{background:var(--info);color:#fff}.btn-sm{padding:7px 12px;font-size:.72rem}
+    /* cards */
+    .card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:14px;margin-bottom:10px}
+    .card-title{font-family:'Cinzel',serif;font-size:.7rem;font-weight:700;color:var(--gold);letter-spacing:.1em;text-transform:uppercase;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+    .card-title::after{content:'';flex:1;height:1px;background:var(--gold-dim);opacity:.5}
 
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html, body { height: 100%; overflow: hidden; }
-    body {
-      font-family: 'Crimson Pro', Georgia, serif;
-      background: var(--bg);
-      color: var(--text);
-      font-size: 16px;
-      line-height: 1.5;
-      -webkit-font-smoothing: antialiased;
-    }
+    /* LIST SCREEN */
+    .list-header{background:var(--surface);padding:26px 18px 16px;text-align:center;border-bottom:1px solid var(--border);flex-shrink:0}
+    .list-header h1{font-family:'Cinzel',serif;font-size:1.45rem;font-weight:900;color:var(--gold);letter-spacing:.08em;text-shadow:0 0 30px rgba(201,153,42,.2)}
+    .list-header p{color:var(--muted);font-style:italic;font-size:.82rem;margin-top:2px}
+    .list-actions{display:flex;gap:8px;padding:10px 14px;background:var(--surface);border-bottom:1px solid var(--border);flex-shrink:0}
+    .char-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:14px;margin-bottom:10px;cursor:pointer;display:flex;align-items:center;gap:12px;-webkit-tap-highlight-color:transparent;transition:border-color .15s}
+    .char-card:active{background:#1f2333}
+    .char-avatar{width:46px;height:46px;border-radius:50%;background:linear-gradient(135deg,var(--gold-dim),var(--gold));display:flex;align-items:center;justify-content:center;font-family:'Cinzel',serif;font-size:1.2rem;font-weight:700;color:#0c0e16;flex-shrink:0}
+    .char-info{flex:1;min-width:0}
+    .char-name{font-family:'Cinzel',serif;font-size:.95rem;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .char-meta{font-size:.78rem;color:var(--muted);font-style:italic}
+    .char-hp-col{text-align:right;flex-shrink:0}
+    .char-hp-val{font-family:'Cinzel',serif;font-size:1rem;font-weight:700}
+    .char-hp-sub{font-size:.7rem;color:var(--muted)}
+    .empty-state{text-align:center;padding:50px 20px;color:var(--muted)}
+    .empty-icon{font-size:3.5rem;margin-bottom:14px;opacity:.4}
+    .empty-state h3{font-family:'Cinzel',serif;color:var(--text);margin-bottom:6px}
+    .empty-state p{font-style:italic;margin-bottom:22px;font-size:.9rem}
 
-    /* ─── SCREENS ─────────────────────────────────────── */
-    .screen {
-      position: fixed; inset: 0;
-      display: flex; flex-direction: column;
-      overflow: hidden;
-      opacity: 0; pointer-events: none;
-      transition: opacity .2s ease;
-    }
-    .screen.active { opacity: 1; pointer-events: all; }
-    .scroll-body {
-      flex: 1; overflow-y: auto;
-      overscroll-behavior: contain;
-      -webkit-overflow-scrolling: touch;
-      padding: 14px 14px 110px;
-    }
-    .scroll-body::-webkit-scrollbar { width: 3px; }
-    .scroll-body::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+    /* HP BLOCK */
+    .hp-block{background:linear-gradient(150deg,#16101e,#141520);border:1px solid var(--border);border-radius:var(--radius);padding:14px;margin-bottom:10px;position:relative;overflow:hidden}
+    .hp-block::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--ember),transparent)}
+    .hp-top-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+    /* SVG Shield */
+    .ac-wrap{position:relative;width:44px;height:44px;flex-shrink:0}
+    .ac-wrap svg{width:44px;height:44px}
+    .ac-num{position:absolute;top:50%;left:50%;transform:translate(-50%,-46%);font-family:'Cinzel',serif;font-size:1rem;font-weight:900;color:var(--text);line-height:1;pointer-events:none}
+    .ac-label{position:absolute;bottom:5px;left:50%;transform:translateX(-50%);font-family:'Cinzel',serif;font-size:.42rem;font-weight:700;color:var(--gold);letter-spacing:.06em;text-transform:uppercase;pointer-events:none}
+    .hp-badge{font-family:'Cinzel',serif;font-size:.7rem;font-weight:700;letter-spacing:.06em;padding:4px 10px;border-radius:20px;border:1px solid}
+    .hp-nums{display:flex;align-items:baseline;justify-content:center;gap:6px;margin-bottom:6px}
+    .hp-cur{font-family:'Cinzel',serif;font-size:3.8rem;font-weight:900;color:var(--text);line-height:1;transition:color .3s}
+    .hp-cur.low{color:#dd8030}.hp-cur.crit{color:#ff3030;animation:blink 1s ease-in-out infinite}
+    @keyframes blink{0%,100%{opacity:1}50%{opacity:.5}}
+    .hp-sep,.hp-maxn{font-family:'Cinzel',serif;color:var(--muted)}.hp-sep{font-size:1.8rem}.hp-maxn{font-size:1.8rem;font-weight:600}
+    .hp-lbl{font-size:.8rem;color:var(--muted);margin-left:4px;align-self:center}
+    .hp-bar-track{height:5px;background:var(--border);border-radius:3px;margin-bottom:10px;overflow:hidden}
+    .hp-bar-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--heal),#5aaa7a);transition:width .4s,background .3s}
+    .hp-bar-fill.low{background:linear-gradient(90deg,#aa6020,#dd8030)}.hp-bar-fill.crit{background:linear-gradient(90deg,#7a1a0a,var(--ember))}
+    .temp-row{display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:12px}
+    .temp-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(26,74,122,.3);border:1px solid rgba(100,160,255,.2);border-radius:20px;padding:4px 12px;font-size:.8rem;color:#8ab8e8}
+    .temp-badge strong{font-family:'Cinzel',serif}
+    .temp-edit-btn{background:transparent;border:none;cursor:pointer;color:var(--muted);font-size:.85rem;padding:2px 4px;-webkit-tap-highlight-color:transparent}
+    /* full-width stacked damage/heal */
+    .hp-actions{display:flex;flex-direction:column;gap:8px}
+    .hp-action-row{display:flex;gap:8px}
+    .hp-action-row input{flex:1;min-width:0;background:var(--surface);border:1px solid var(--border);border-radius:var(--rsm);color:var(--text);font-family:'Cinzel',serif;font-size:1.1rem;padding:11px 8px;text-align:center;-webkit-tap-highlight-color:transparent}
+    .hp-action-row input:focus{outline:none;border-color:var(--gold)}
+    .hp-action-row input::placeholder{color:var(--muted);font-size:.75rem;font-family:'Crimson Pro',serif}
+    .hp-action-row .btn{flex-shrink:0;width:105px;padding:11px 8px}
+    /* conditions inside hp */
+    .cond-divider{height:1px;background:var(--border);margin:12px 0}
+    .active-conds{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px;min-height:20px}
+    .active-chip{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:14px;font-size:.76rem;font-weight:600;border:1px solid;cursor:pointer;-webkit-tap-highlight-color:transparent}
+    .active-chip:active{opacity:.7}
+    .no-conds{font-size:.8rem;color:var(--muted);font-style:italic;padding:2px 0}
+    .cond-toggle-btn{display:flex;align-items:center;gap:6px;background:transparent;border:none;cursor:pointer;color:var(--gold);font-family:'Cinzel',serif;font-size:.7rem;font-weight:600;letter-spacing:.07em;text-transform:uppercase;padding:4px 0;-webkit-tap-highlight-color:transparent}
+    .cond-toggle-btn .chev{transition:transform .2s;display:inline-block}
+    .cond-toggle-btn.open .chev{transform:rotate(90deg)}
+    .cond-accordion{overflow:hidden;max-height:0;transition:max-height .3s ease}
+    .cond-accordion.open{max-height:600px}
+    .conds-grid{display:flex;flex-wrap:wrap;gap:7px;padding-top:10px}
+    .cond-chip{padding:6px 11px;border-radius:18px;border:1px solid var(--border);font-size:.76rem;cursor:pointer;background:var(--surface);color:var(--muted);transition:all .15s;-webkit-tap-highlight-color:transparent;display:flex;align-items:center;gap:5px}
+    .cond-chip.on.cr{background:#4a0a0a;border-color:#c03030;color:#ff8080}
+    .cond-chip.on.co{background:#4a1a02;border-color:#c06020;color:#ffa060}
+    .cond-chip.on.cb{background:#061832;border-color:#2060c0;color:#80a0ff}
+    .cond-chip.on.cp{background:#1e0a3a;border-color:#7030c0;color:#c080ff}
+    .cond-chip.on.ct{background:#042626;border-color:#2a9090;color:#60d0d0}
+    .cond-chip.on.cy{background:#261c00;border-color:#a09010;color:#e0d060}
 
-    /* ─── TOPBAR ──────────────────────────────────────── */
-    .topbar {
-      background: var(--surface);
-      border-bottom: 1px solid var(--border);
-      padding: 12px 14px;
-      display: flex; align-items: center; gap: 10px;
-      flex-shrink: 0;
-    }
-    .topbar-title {
-      font-family: 'Cinzel', serif; font-size: 1rem;
-      font-weight: 700; color: var(--gold); flex: 1;
-      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-    }
-    .topbar-sub { font-size: .75rem; color: var(--muted); font-style: italic; }
-    .btn-back {
-      background: transparent; border: none; color: var(--gold);
-      font-size: 1.3rem; cursor: pointer; padding: 4px 6px;
-      -webkit-tap-highlight-color: transparent; flex-shrink: 0;
-    }
+    /* DEATH SAVES */
+    .death-card{background:linear-gradient(150deg,#160404,#100310);border:1px solid #5a1010;border-radius:var(--radius);padding:14px;margin-bottom:10px}
+    .death-title{font-family:'Cinzel',serif;font-size:.7rem;font-weight:700;color:#ff6060;letter-spacing:.1em;text-transform:uppercase;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+    .death-title::after{content:'';flex:1;height:1px;background:#5a1010}
+    .ds-row{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+    .ds-label{font-family:'Cinzel',serif;font-size:.68rem;color:var(--muted);width:62px;flex-shrink:0}
+    .ds-boxes{display:flex;gap:7px}
+    .ds-box{width:30px;height:30px;border-radius:var(--rxs);border:2px solid var(--border);background:transparent;cursor:pointer;transition:all .15s;-webkit-tap-highlight-color:transparent;display:flex;align-items:center;justify-content:center;font-size:.85rem}
+    .ds-box.suc.on{background:var(--heal);border-color:transparent}
+    .ds-box.fal.on{background:var(--danger);border-color:transparent}
 
-    /* ─── BUTTONS ─────────────────────────────────────── */
-    .btn {
-      display: inline-flex; align-items: center; justify-content: center; gap: 6px;
-      padding: 11px 18px; border-radius: var(--rad-sm);
-      border: none; cursor: pointer;
-      font-family: 'Cinzel', serif; font-size: .78rem; font-weight: 600;
-      letter-spacing: .05em; transition: filter .15s, transform .1s;
-      -webkit-tap-highlight-color: transparent; white-space: nowrap;
-    }
-    .btn:active { transform: scale(.95); }
-    .btn-gold   { background: var(--gold); color: #0c0e16; }
-    .btn-ghost  { background: transparent; border: 1px solid var(--border); color: var(--text); }
-    .btn-ember  { background: var(--ember); color: #fff; }
-    .btn-heal   { background: var(--heal); color: #fff; }
-    .btn-danger { background: var(--danger); color: #fff; }
-    .btn-info   { background: var(--info); color: #fff; }
-    .btn-purple { background: #4a1a7a; color: #d0a0ff; }
-    .btn-sm     { padding: 7px 12px; font-size: .72rem; }
-    .btn-xs     { padding: 5px 9px; font-size: .68rem; border-radius: var(--rad-xs); }
+    /* STATS */
+    .stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+    .stat-box{background:var(--surface);border:1px solid var(--border);border-radius:var(--rsm);padding:10px 6px;text-align:center}
+    .stat-name{font-family:'Cinzel',serif;font-size:.62rem;font-weight:700;color:var(--gold);letter-spacing:.08em;text-transform:uppercase;margin-bottom:3px}
+    .stat-score{font-family:'Cinzel',serif;font-size:1.5rem;font-weight:700;color:var(--text);line-height:1}
+    .stat-mod{font-size:.82rem;margin-top:2px;color:var(--muted)}
+    .stat-mod.pos{color:#5aaa7a}.stat-mod.neg{color:#e06040}
 
-    /* ─── CARDS ───────────────────────────────────────── */
-    .card {
-      background: var(--card); border: 1px solid var(--border);
-      border-radius: var(--radius); padding: 14px 14px;
-      margin-bottom: 10px;
-    }
-    .card-title {
-      font-family: 'Cinzel', serif; font-size: .7rem; font-weight: 700;
-      color: var(--gold); letter-spacing: .1em; text-transform: uppercase;
-      margin-bottom: 12px; display: flex; align-items: center; gap: 8px;
-    }
-    .card-title::after { content: ''; flex: 1; height: 1px; background: var(--gold-dim); opacity: .5; }
+    /* COMBAT */
+    .combat-row{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+    .cstat{background:var(--surface);border:1px solid var(--border);border-radius:var(--rsm);padding:10px 6px;text-align:center}
+    .cstat-val{font-family:'Cinzel',serif;font-size:1.2rem;font-weight:700;color:var(--text)}
+    .cstat-label{font-family:'Cinzel',serif;font-size:.6rem;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;margin-top:2px}
 
-    /* ════════════════════════════════════════════════════
-       SCREEN 1 — CHARACTER LIST
-    ════════════════════════════════════════════════════ */
-    .list-header {
-      background: var(--surface);
-      padding: 28px 18px 18px; text-align: center;
-      border-bottom: 1px solid var(--border); flex-shrink: 0;
-    }
-    .list-header h1 {
-      font-family: 'Cinzel', serif; font-size: 1.5rem; font-weight: 900;
-      color: var(--gold); letter-spacing: .08em;
-      text-shadow: 0 0 30px rgba(201,153,42,.2);
-    }
-    .list-header p { color: var(--muted); font-style: italic; font-size: .85rem; margin-top: 3px; }
-    .list-actions { display: flex; gap: 8px; padding: 10px 14px; background: var(--surface); border-bottom: 1px solid var(--border); flex-shrink: 0; }
-    .list-actions .btn { flex: 1; }
+    /* SPELLS */
+    .spell-meta-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px}
+    .spell-meta-box{background:var(--surface);border:1px solid var(--border);border-radius:var(--rsm);padding:10px 6px;text-align:center}
+    .spell-meta-val{font-family:'Cinzel',serif;font-size:1.2rem;font-weight:700;color:#c080ff}
+    .spell-meta-label{font-family:'Cinzel',serif;font-size:.6rem;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;margin-top:2px}
+    .spell-level-row{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+    .spell-lvl-lbl{font-family:'Cinzel',serif;font-size:.68rem;font-weight:700;color:var(--gold);width:28px;flex-shrink:0;text-align:center}
+    .spell-bubbles{display:flex;gap:7px;flex-wrap:wrap;flex:1}
+    .slot-pip{width:26px;height:26px;border-radius:50%;border:2px solid var(--gold-dim);background:transparent;cursor:pointer;transition:background .15s,border-color .15s;-webkit-tap-highlight-color:transparent;display:flex;align-items:center;justify-content:center;font-size:.6rem}
+    .slot-pip.used{background:rgba(201,153,42,.15);border-color:var(--gold-dim);color:var(--gold-dim)}
+    .slot-pip.used::after{content:'✕'}
+    .spell-count{font-size:.75rem;color:var(--muted);margin-left:auto;white-space:nowrap}
 
-    .char-card {
-      background: var(--card); border: 1px solid var(--border);
-      border-radius: var(--radius); padding: 14px;
-      margin-bottom: 10px; cursor: pointer;
-      display: flex; align-items: center; gap: 12px;
-      -webkit-tap-highlight-color: transparent;
-      transition: border-color .15s;
-    }
-    .char-card:active { background: #1f2333; }
-    .char-avatar {
-      width: 46px; height: 46px; border-radius: 50%;
-      background: linear-gradient(135deg, var(--gold-dim), var(--gold));
-      display: flex; align-items: center; justify-content: center;
-      font-family: 'Cinzel', serif; font-size: 1.2rem; font-weight: 700;
-      color: #0c0e16; flex-shrink: 0;
-    }
-    .char-info { flex: 1; min-width: 0; }
-    .char-name { font-family: 'Cinzel', serif; font-size: .95rem; font-weight: 700; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .char-meta { font-size: .78rem; color: var(--muted); font-style: italic; }
-    .char-hp-col { text-align: right; flex-shrink: 0; }
-    .char-hp-val { font-family: 'Cinzel', serif; font-size: 1rem; font-weight: 700; }
-    .char-hp-sub { font-size: .7rem; color: var(--muted); }
+    /* ACCORDION */
+    .section-acc{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:10px;overflow:hidden}
+    .acc-head{display:flex;align-items:center;justify-content:space-between;padding:13px 14px;cursor:pointer;-webkit-tap-highlight-color:transparent}
+    .acc-title{font-family:'Cinzel',serif;font-size:.7rem;font-weight:700;color:var(--gold);letter-spacing:.1em;text-transform:uppercase;display:flex;align-items:center;gap:8px}
+    .acc-chev{color:var(--muted);transition:transform .25s;font-size:.9rem}
+    .acc-chev.open{transform:rotate(90deg)}
+    .acc-body{max-height:0;overflow:hidden;transition:max-height .35s ease}
+    .acc-body.open{max-height:2000px}
+    .acc-inner{padding:0 14px 14px}
 
-    .empty-state { text-align: center; padding: 50px 20px; color: var(--muted); }
-    .empty-icon { font-size: 3.5rem; margin-bottom: 14px; opacity: .4; }
-    .empty-state h3 { font-family: 'Cinzel', serif; color: var(--text); margin-bottom: 6px; }
-    .empty-state p { font-style: italic; margin-bottom: 22px; font-size: .9rem; }
+    /* SKILLS / SAVES rows */
+    .skill-grp-header{font-family:'Cinzel',serif;font-size:.62rem;font-weight:700;color:var(--muted);letter-spacing:.12em;text-transform:uppercase;padding:8px 0 4px;border-bottom:1px solid var(--border);margin-bottom:4px}
+    .skill-row{display:flex;align-items:center;justify-content:space-between;padding:7px 6px;border-radius:var(--rxs)}
+    .skill-row:hover{background:rgba(255,255,255,.03)}
+    .skill-left{display:flex;align-items:center;gap:7px}
+    .skill-icon{font-size:.85rem;width:16px;text-align:center}
+    .skill-nm{font-size:.88rem;color:var(--text)}
+    .skill-stag{font-family:'Cinzel',serif;font-size:.6rem;color:var(--muted)}
+    .skill-bonus{font-family:'Cinzel',serif;font-size:.9rem;font-weight:700}
+    .skill-bonus.pos{color:#5aaa7a}.skill-bonus.neg{color:#e06040}.skill-bonus.z{color:var(--muted)}
+    .passive-row{display:flex;justify-content:space-between;align-items:center;padding:8px 6px;border-top:1px solid var(--border);margin-top:6px;font-size:.82rem}
+    .passive-lbl{color:var(--muted);font-style:italic}
+    .passive-val{font-family:'Cinzel',serif;font-weight:700;color:var(--text)}
 
-    /* ════════════════════════════════════════════════════
-       SCREEN 2 — CHARACTER SHEET
-    ════════════════════════════════════════════════════ */
+    /* REST BAR */
+    .rest-bar{position:fixed;bottom:0;left:0;right:0;background:var(--surface);border-top:1px solid var(--border);padding:10px 14px;display:flex;gap:8px;z-index:10}
+    .rest-bar .btn{flex:1}
 
-    /* ── HP BLOCK ── */
-    .hp-block {
-      background: linear-gradient(150deg, #16101e, #141520);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 14px; margin-bottom: 10px;
-      position: relative; overflow: hidden;
-    }
-    .hp-block::before {
-      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
-      background: linear-gradient(90deg, transparent, var(--ember), transparent);
-    }
+    /* CREATE FORM */
+    .form-group{margin-bottom:14px}
+    .form-label{display:block;font-family:'Cinzel',serif;font-size:.68rem;font-weight:700;color:var(--gold);letter-spacing:.08em;text-transform:uppercase;margin-bottom:5px}
+    .form-input{width:100%;padding:11px 13px;background:var(--card);border:1px solid var(--border);border-radius:var(--rsm);color:var(--text);font-family:'Crimson Pro',serif;font-size:1rem;transition:border-color .15s}
+    .form-input:focus{outline:none;border-color:var(--gold)}
+    .form-select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M5 6L0 0h10z' fill='%236a6458'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 13px center;padding-right:34px;cursor:pointer}
+    .form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .form-row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+    .form-hint{font-size:.76rem;color:var(--muted);font-style:italic;margin-top:3px}
+    .form-section{font-family:'Cinzel',serif;font-size:.88rem;font-weight:700;color:var(--gold);letter-spacing:.06em;padding-bottom:7px;border-bottom:1px solid var(--gold-dim);margin:22px 0 14px;display:flex;align-items:center;gap:8px}
+    .toggle-row{display:flex;align-items:center;justify-content:space-between;padding:11px 13px;background:var(--card);border:1px solid var(--border);border-radius:var(--rsm);margin-bottom:12px}
+    .toggle{width:42px;height:23px;border-radius:12px;background:var(--border);border:none;cursor:pointer;position:relative;transition:background .2s;flex-shrink:0}
+    .toggle::after{content:'';width:17px;height:17px;border-radius:50%;background:#fff;position:absolute;top:3px;left:3px;transition:transform .2s}
+    .toggle.on{background:var(--gold)}.toggle.on::after{transform:translateX(19px)}
+    .spell-input-row{display:flex;align-items:center;gap:8px;margin-bottom:7px}
+    .spell-input-lbl{font-family:'Cinzel',serif;font-size:.7rem;color:var(--gold);width:52px;flex-shrink:0}
+    .spell-input-row .form-input{width:64px;padding:8px 8px;text-align:center;flex-shrink:0}
+    /* save form */
+    .save-form-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:4px}
+    .save-form-item{display:flex;align-items:center;justify-content:space-between;padding:8px 10px;background:var(--card);border:1px solid var(--border);border-radius:var(--rxs)}
+    .save-form-left{display:flex;flex-direction:column}
+    .save-form-name{font-size:.82rem;color:var(--text)}
+    .save-form-stat{font-family:'Cinzel',serif;font-size:.58rem;color:var(--muted)}
+    .prof-btn{min-width:32px;padding:4px 6px;border-radius:5px;border:1px solid var(--border);background:transparent;font-family:'Cinzel',serif;font-size:.68rem;font-weight:700;cursor:pointer;-webkit-tap-highlight-color:transparent;color:var(--muted);transition:all .15s;text-align:center}
+    .prof-btn[data-state="1"]{background:rgba(26,74,122,.5);border-color:#2060c0;color:#80a0ff}
+    .prof-btn[data-state="2"]{background:rgba(201,153,42,.15);border-color:var(--gold);color:var(--gold)}
+    /* skills form */
+    .skills-form-list{display:flex;flex-direction:column;gap:5px}
+    .skill-form-item{display:flex;align-items:center;gap:8px;padding:8px 10px;background:var(--card);border:1px solid var(--border);border-radius:var(--rxs)}
+    .skill-form-left{flex:1;min-width:0}
+    .skill-form-name{font-size:.84rem;color:var(--text)}
+    .skill-form-stat{font-family:'Cinzel',serif;font-size:.58rem;color:var(--muted)}
+    .sko-input{width:56px;flex-shrink:0;padding:6px 6px;text-align:center;font-family:'Cinzel',serif;font-size:.88rem;background:var(--surface);border:1px solid var(--border);border-radius:var(--rxs);color:var(--text)}
+    .sko-input:focus{outline:none;border-color:var(--gold)}
+    /* PDF */
+    .pdf-area{border:1px dashed var(--border);border-radius:var(--rsm);padding:16px;text-align:center;margin-bottom:16px;cursor:pointer;transition:border-color .15s;-webkit-tap-highlight-color:transparent}
+    .pdf-area:hover{border-color:var(--gold)}
+    .pdf-area p{font-size:.82rem;color:var(--muted);font-style:italic;margin-top:5px}
+    #pdf-input{display:none}
 
-    /* Top row: AC shield + status badge */
-    .hp-top-row {
-      display: flex; align-items: center; justify-content: space-between;
-      margin-bottom: 10px;
-    }
-    .ac-shield {
-      display: flex; align-items: center; gap: 0;
-      position: relative;
-    }
-    .ac-shield-icon {
-      font-size: 2.6rem; line-height: 1;
-      filter: drop-shadow(0 1px 4px rgba(201,153,42,.3));
-    }
-    .ac-value {
-      position: absolute; top: 50%; left: 50%;
-      transform: translate(-50%, -44%);
-      font-family: 'Cinzel', serif; font-size: .9rem; font-weight: 900;
-      color: var(--gold); line-height: 1;
-    }
-    .hp-status-badge {
-      font-family: 'Cinzel', serif; font-size: .7rem; font-weight: 700;
-      letter-spacing: .06em; padding: 4px 10px;
-      border-radius: 20px; border: 1px solid;
-      text-align: right;
-    }
-
-    /* HP numbers */
-    .hp-numbers-row {
-      display: flex; align-items: baseline; justify-content: center; gap: 6px;
-      margin-bottom: 6px;
-    }
-    .hp-current {
-      font-family: 'Cinzel', serif; font-size: 3.8rem; font-weight: 900;
-      color: var(--text); line-height: 1; transition: color .3s;
-    }
-    .hp-current.low      { color: #dd8030; }
-    .hp-current.critical { color: #ff3030; animation: pulse-crit 1s ease-in-out infinite; }
-    @keyframes pulse-crit { 0%,100% { opacity: 1; } 50% { opacity: .55; } }
-    .hp-sep   { font-family: 'Cinzel', serif; font-size: 1.8rem; color: var(--muted); }
-    .hp-max   { font-family: 'Cinzel', serif; font-size: 1.8rem; color: var(--muted); font-weight: 600; }
-    .hp-label { font-size: .8rem; color: var(--muted); margin-left: 4px; align-self: center; }
-
-    /* HP Bar */
-    .hp-bar-track { height: 5px; background: var(--border); border-radius: 3px; margin-bottom: 10px; overflow: hidden; }
-    .hp-bar-fill  { height: 100%; border-radius: 3px; background: linear-gradient(90deg, var(--heal), #5aaa7a); transition: width .4s ease, background .3s; }
-    .hp-bar-fill.low      { background: linear-gradient(90deg, #aa6020, #dd8030); }
-    .hp-bar-fill.critical { background: linear-gradient(90deg, #7a1a0a, var(--ember)); }
-
-    /* Temp HP row */
-    .temp-row {
-      display: flex; align-items: center; justify-content: center;
-      gap: 8px; margin-bottom: 12px;
-    }
-    .temp-badge {
-      display: inline-flex; align-items: center; gap: 6px;
-      background: rgba(26,74,122,.3); border: 1px solid rgba(100,160,255,.2);
-      border-radius: 20px; padding: 4px 12px;
-      font-size: .8rem; color: #8ab8e8;
-    }
-    .temp-badge strong { font-family: 'Cinzel', serif; }
-    .temp-edit-btn {
-      background: transparent; border: none; cursor: pointer;
-      color: var(--muted); font-size: .85rem; padding: 2px 4px;
-      -webkit-tap-highlight-color: transparent;
-    }
-
-    /* Damage / Heal actions — stacked vertically, full width */
-    .hp-actions { display: flex; flex-direction: column; gap: 8px; }
-    .hp-action-row { display: flex; gap: 8px; align-items: stretch; }
-    .hp-action-row input {
-      flex: 1; min-width: 0;
-      background: var(--surface); border: 1px solid var(--border);
-      border-radius: var(--rad-sm); color: var(--text);
-      font-family: 'Cinzel', serif; font-size: 1.1rem;
-      padding: 11px 10px; text-align: center;
-      -webkit-tap-highlight-color: transparent;
-    }
-    .hp-action-row input:focus { outline: none; border-color: var(--gold); }
-    .hp-action-row input::placeholder { color: var(--muted); font-size: .78rem; font-family: 'Crimson Pro', serif; }
-    .hp-action-row .btn { min-width: 90px; flex-shrink: 0; padding: 11px 12px; }
-
-    /* Conditions inside HP block */
-    .cond-divider { height: 1px; background: var(--border); margin: 12px 0; }
-    .active-conds {
-      display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px;
-      min-height: 0;
-    }
-    .active-cond-chip {
-      display: inline-flex; align-items: center; gap: 4px;
-      padding: 3px 9px; border-radius: 14px;
-      font-size: .76rem; font-weight: 600;
-      border: 1px solid;
-    }
-    .no-conds { font-size: .8rem; color: var(--muted); font-style: italic; }
-    .cond-toggle-btn {
-      display: flex; align-items: center; gap: 6px;
-      background: transparent; border: none; cursor: pointer;
-      color: var(--gold); font-family: 'Cinzel', serif; font-size: .7rem;
-      font-weight: 600; letter-spacing: .07em; text-transform: uppercase;
-      padding: 4px 0; -webkit-tap-highlight-color: transparent;
-    }
-    .cond-toggle-btn .chevron { transition: transform .2s; display: inline-block; }
-    .cond-toggle-btn.open .chevron { transform: rotate(90deg); }
-
-    /* All conditions grid (collapsible) */
-    .cond-accordion { overflow: hidden; max-height: 0; transition: max-height .3s ease; }
-    .cond-accordion.open { max-height: 600px; }
-    .conds-grid { display: flex; flex-wrap: wrap; gap: 7px; padding-top: 10px; }
-    .cond-chip {
-      padding: 6px 11px; border-radius: 18px;
-      border: 1px solid var(--border);
-      font-size: .76rem; cursor: pointer;
-      background: var(--surface); color: var(--muted);
-      transition: all .15s; -webkit-tap-highlight-color: transparent;
-      display: flex; align-items: center; gap: 5px;
-    }
-    .cond-chip.active.cond-red    { background: #4a0a0a; border-color: #c03030; color: #ff8080; }
-    .cond-chip.active.cond-orange { background: #4a1a02; border-color: #c06020; color: #ffa060; }
-    .cond-chip.active.cond-blue   { background: #061832; border-color: #2060c0; color: #80a0ff; }
-    .cond-chip.active.cond-purple { background: #1e0a3a; border-color: #7030c0; color: #c080ff; }
-    .cond-chip.active.cond-teal   { background: #042626; border-color: #2a9090; color: #60d0d0; }
-    .cond-chip.active.cond-yellow { background: #261c00; border-color: #a09010; color: #e0d060; }
-
-    /* ── DEATH SAVES ── */
-    .death-card {
-      background: linear-gradient(150deg, #160404, #100310);
-      border: 1px solid #5a1010; border-radius: var(--radius);
-      padding: 14px; margin-bottom: 10px;
-    }
-    .death-title {
-      font-family: 'Cinzel', serif; font-size: .7rem; font-weight: 700;
-      color: #ff6060; letter-spacing: .1em; text-transform: uppercase;
-      margin-bottom: 12px; display: flex; align-items: center; gap: 8px;
-    }
-    .death-title::after { content: ''; flex: 1; height: 1px; background: #5a1010; }
-    .ds-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
-    .ds-label { font-family: 'Cinzel', serif; font-size: .68rem; color: var(--muted); width: 62px; flex-shrink: 0; }
-    .ds-boxes { display: flex; gap: 7px; }
-    .ds-box {
-      width: 30px; height: 30px; border-radius: var(--rad-xs);
-      border: 2px solid var(--border);
-      background: transparent; cursor: pointer;
-      transition: all .15s; -webkit-tap-highlight-color: transparent;
-      display: flex; align-items: center; justify-content: center; font-size: .85rem;
-    }
-    .ds-box.success.filled { background: var(--heal); border-color: transparent; }
-    .ds-box.fail.filled    { background: var(--danger); border-color: transparent; }
-
-    /* ── ABILITY SCORES ── */
-    .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
-    .stat-box {
-      background: var(--surface); border: 1px solid var(--border);
-      border-radius: var(--rad-sm); padding: 10px 6px; text-align: center;
-    }
-    .stat-name  { font-family: 'Cinzel', serif; font-size: .62rem; font-weight: 700; color: var(--gold); letter-spacing: .08em; text-transform: uppercase; margin-bottom: 3px; }
-    .stat-score { font-family: 'Cinzel', serif; font-size: 1.5rem; font-weight: 700; color: var(--text); line-height: 1; }
-    .stat-mod   { font-size: .82rem; margin-top: 2px; color: var(--muted); }
-    .stat-mod.pos { color: #5aaa7a; }
-    .stat-mod.neg { color: #e06040; }
-
-    /* ── COMBAT STATS ── */
-    .combat-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
-    .cstat {
-      background: var(--surface); border: 1px solid var(--border);
-      border-radius: var(--rad-sm); padding: 10px 6px; text-align: center;
-    }
-    .cstat-val   { font-family: 'Cinzel', serif; font-size: 1.2rem; font-weight: 700; color: var(--text); }
-    .cstat-label { font-family: 'Cinzel', serif; font-size: .6rem; color: var(--muted); letter-spacing: .06em; text-transform: uppercase; margin-top: 2px; }
-
-    /* ── SPELL SLOTS ── */
-    .spell-level-row {
-      display: flex; align-items: center; gap: 8px;
-      margin-bottom: 10px;
-    }
-    .spell-lvl-lbl {
-      font-family: 'Cinzel', serif; font-size: .68rem; font-weight: 700;
-      color: var(--gold); width: 28px; flex-shrink: 0; text-align: center;
-    }
-    .spell-bubbles { display: flex; gap: 7px; flex-wrap: wrap; flex: 1; }
-    .slot-pip {
-      width: 26px; height: 26px; border-radius: 50%;
-      border: 2px solid var(--gold-dim);
-      background: transparent; cursor: pointer;
-      transition: background .15s, border-color .15s;
-      -webkit-tap-highlight-color: transparent;
-      display: flex; align-items: center; justify-content: center;
-      font-size: .6rem;
-    }
-    .slot-pip.used { background: rgba(201,153,42,.15); border-color: var(--gold-dim); color: var(--gold-dim); }
-    .slot-pip.used::after { content: '✕'; }
-    .spell-count { font-size: .75rem; color: var(--muted); margin-left: auto; white-space: nowrap; }
-
-    /* ── SKILLS (collapsible) ── */
-    .section-accordion {
-      background: var(--card); border: 1px solid var(--border);
-      border-radius: var(--radius); margin-bottom: 10px; overflow: hidden;
-    }
-    .accordion-header {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 13px 14px; cursor: pointer;
-      -webkit-tap-highlight-color: transparent;
-    }
-    .accordion-title {
-      font-family: 'Cinzel', serif; font-size: .7rem; font-weight: 700;
-      color: var(--gold); letter-spacing: .1em; text-transform: uppercase;
-      display: flex; align-items: center; gap: 8px;
-    }
-    .accordion-chevron { color: var(--muted); transition: transform .25s; font-size: .9rem; }
-    .accordion-chevron.open { transform: rotate(90deg); }
-    .accordion-body { max-height: 0; overflow: hidden; transition: max-height .3s ease; }
-    .accordion-body.open { max-height: 1200px; }
-    .accordion-inner { padding: 0 14px 14px; }
-
-    .skills-list { display: flex; flex-direction: column; gap: 2px; }
-    .skill-row {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 7px 8px; border-radius: var(--rad-xs);
-      transition: background .1s;
-    }
-    .skill-row:hover { background: rgba(255,255,255,.03); }
-    .skill-left { display: flex; align-items: center; gap: 8px; }
-    .skill-prof-icon { font-size: .85rem; width: 16px; text-align: center; }
-    .skill-name-text { font-size: .88rem; color: var(--text); }
-    .skill-stat-tag { font-family: 'Cinzel', serif; font-size: .6rem; color: var(--muted); }
-    .skill-bonus { font-family: 'Cinzel', serif; font-size: .9rem; font-weight: 700; }
-    .skill-bonus.pos { color: #5aaa7a; }
-    .skill-bonus.neg { color: #e06040; }
-    .skill-bonus.zero { color: var(--muted); }
-    .passive-row {
-      display: flex; justify-content: space-between; align-items: center;
-      padding: 8px; border-top: 1px solid var(--border); margin-top: 8px;
-      font-size: .82rem;
-    }
-    .passive-label { color: var(--muted); font-style: italic; }
-    .passive-val { font-family: 'Cinzel', serif; font-weight: 700; color: var(--text); }
-
-    /* ── REST BAR ── */
-    .rest-bar {
-      position: fixed; bottom: 0; left: 0; right: 0;
-      background: var(--surface); border-top: 1px solid var(--border);
-      padding: 10px 14px; display: flex; gap: 8px; z-index: 10;
-    }
-    .rest-bar .btn { flex: 1; }
-
-    /* ════════════════════════════════════════════════════
-       SCREEN 3 — CREATE / EDIT CHARACTER
-    ════════════════════════════════════════════════════ */
-    .form-group { margin-bottom: 14px; }
-    .form-label {
-      display: block; font-family: 'Cinzel', serif; font-size: .68rem;
-      font-weight: 700; color: var(--gold); letter-spacing: .08em;
-      text-transform: uppercase; margin-bottom: 5px;
-    }
-    .form-input {
-      width: 100%; padding: 11px 13px;
-      background: var(--card); border: 1px solid var(--border);
-      border-radius: var(--rad-sm); color: var(--text);
-      font-family: 'Crimson Pro', serif; font-size: 1rem;
-      transition: border-color .15s;
-    }
-    .form-input:focus { outline: none; border-color: var(--gold); }
-    .form-select {
-      appearance: none;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M5 6L0 0h10z' fill='%236a6458'/%3E%3C/svg%3E");
-      background-repeat: no-repeat; background-position: right 13px center;
-      padding-right: 34px; cursor: pointer;
-    }
-    .form-row   { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-    .form-row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
-    .form-hint  { font-size: .76rem; color: var(--muted); font-style: italic; margin-top: 3px; }
-    .form-section {
-      font-family: 'Cinzel', serif; font-size: .88rem; font-weight: 700;
-      color: var(--gold); letter-spacing: .06em;
-      padding-bottom: 7px; border-bottom: 1px solid var(--gold-dim);
-      margin: 22px 0 14px; display: flex; align-items: center; gap: 8px;
-    }
-
-    /* Toggle */
-    .toggle-row {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 11px 13px; background: var(--card); border: 1px solid var(--border);
-      border-radius: var(--rad-sm); margin-bottom: 12px;
-    }
-    .toggle-label { font-size: .9rem; }
-    .toggle {
-      width: 42px; height: 23px; border-radius: 12px;
-      background: var(--border); border: none; cursor: pointer;
-      position: relative; transition: background .2s; flex-shrink: 0;
-    }
-    .toggle::after {
-      content: ''; width: 17px; height: 17px; border-radius: 50%;
-      background: #fff; position: absolute; top: 3px; left: 3px;
-      transition: transform .2s;
-    }
-    .toggle.on { background: var(--gold); }
-    .toggle.on::after { transform: translateX(19px); }
-
-    /* Spell slot inputs in create form */
-    .spell-input-row {
-      display: flex; align-items: center; gap: 8px; margin-bottom: 7px;
-    }
-    .spell-input-lbl { font-family: 'Cinzel', serif; font-size: .7rem; color: var(--gold); width: 52px; flex-shrink: 0; }
-    .spell-input-row input { width: 64px; padding: 8px 8px; text-align: center; flex-shrink: 0; }
-    .spell-input-note { font-size: .78rem; color: var(--muted); }
-
-    /* Skills in create form */
-    .skills-form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; }
-    .skill-form-item {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 7px 8px; background: var(--card); border: 1px solid var(--border);
-      border-radius: var(--rad-xs);
-    }
-    .skill-form-name { font-size: .8rem; color: var(--text); }
-    .skill-form-stat { font-family: 'Cinzel', serif; font-size: .58rem; color: var(--muted); display: block; }
-    .prof-cycle-btn {
-      min-width: 34px; padding: 4px 6px; border-radius: 5px;
-      border: 1px solid var(--border); background: transparent;
-      font-family: 'Cinzel', serif; font-size: .68rem; font-weight: 700;
-      cursor: pointer; -webkit-tap-highlight-color: transparent; color: var(--muted);
-      transition: all .15s; text-align: center;
-    }
-    .prof-cycle-btn[data-state="1"] { background: rgba(26,74,122,.5); border-color: #2060c0; color: #80a0ff; }
-    .prof-cycle-btn[data-state="2"] { background: rgba(201,153,42,.15); border-color: var(--gold); color: var(--gold); }
-
-    /* PDF import button */
-    .pdf-import-area {
-      border: 1px dashed var(--border); border-radius: var(--rad-sm);
-      padding: 16px; text-align: center; margin-bottom: 16px;
-      cursor: pointer; transition: border-color .15s;
-      -webkit-tap-highlight-color: transparent;
-    }
-    .pdf-import-area:hover { border-color: var(--gold); }
-    .pdf-import-area p { font-size: .85rem; color: var(--muted); font-style: italic; margin-top: 6px; }
-    #pdf-file-input { display: none; }
-
-    /* ════════════════════════════════════════════════════
-       OVERLAYS / MODALS
-    ════════════════════════════════════════════════════ */
-    .overlay {
-      position: fixed; inset: 0;
-      background: rgba(0,0,0,.75); backdrop-filter: blur(3px);
-      display: flex; align-items: flex-end; justify-content: center;
-      z-index: 100; opacity: 0; pointer-events: none;
-      transition: opacity .2s;
-    }
-    .overlay.open { opacity: 1; pointer-events: all; }
-    .modal {
-      background: var(--surface); border: 1px solid var(--border);
-      border-radius: var(--radius) var(--radius) 0 0;
-      padding: 22px 18px 30px;
-      width: 100%; max-width: 480px;
-      max-height: 90vh; overflow-y: auto;
-      transform: translateY(24px); transition: transform .25s ease;
-    }
-    .overlay.open .modal { transform: translateY(0); }
-    .modal-title {
-      font-family: 'Cinzel', serif; font-size: 1.05rem; font-weight: 700;
-      color: var(--gold); margin-bottom: 14px; text-align: center;
-    }
-    .modal-text { color: var(--text); font-style: italic; text-align: center; margin-bottom: 14px; font-size: .9rem; }
-    .modal-actions { display: flex; gap: 8px; margin-top: 16px; }
-    .modal-actions .btn { flex: 1; }
-
-    /* Number stepper */
-    .num-stepper {
-      display: flex; align-items: center; gap: 10px;
-      margin: 14px 16px;
-    }
-    .num-stepper button {
-      width: 42px; height: 42px; border-radius: 50%;
-      border: 2px solid var(--border); background: var(--card);
-      color: var(--text); font-size: 1.3rem; cursor: pointer;
-      display: flex; align-items: center; justify-content: center;
-      transition: border-color .15s; flex-shrink: 0;
-    }
-    .num-stepper button:active { border-color: var(--gold); }
-    .num-stepper input {
-      flex: 1; text-align: center;
-      background: var(--card); border: 1px solid var(--border);
-      border-radius: var(--rad-sm); color: var(--text);
-      font-family: 'Cinzel', serif; font-size: 1.7rem;
-      padding: 10px; -webkit-tap-highlight-color: transparent;
-    }
-    .num-stepper input:focus { outline: none; border-color: var(--gold); }
-
-    /* Short rest hit dice in modal */
-    .hd-modal-row { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0 14px; justify-content: center; }
-    .hd-pip {
-      width: 36px; height: 36px; border-radius: var(--rad-xs);
-      border: 2px solid var(--gold-dim); background: rgba(201,153,42,.08);
-      display: flex; align-items: center; justify-content: center;
-      font-family: 'Cinzel', serif; font-size: .7rem; font-weight: 700; color: var(--gold);
-      cursor: default;
-    }
-    .hd-pip.used { background: var(--border); border-color: var(--border); color: var(--muted); }
-    .hd-pip.used::after { content: ''; }
-
-    /* Heal preview */
-    .heal-preview-num { font-family: 'Cinzel', serif; font-size: 1.5rem; font-weight: 900; color: var(--heal); text-align: center; margin: 4px 0; }
-    .heal-preview-sub { font-size: .82rem; color: var(--muted); text-align: center; }
-    .heal-preview-sub span { color: var(--gold); font-family: 'Cinzel', serif; font-weight: 700; }
-
-    /* Export/Import modals */
-    #qr-container { display: flex; justify-content: center; margin: 14px 0; }
-    #qr-container canvas, #qr-container img { border-radius: var(--rad-sm); border: 3px solid var(--gold); }
-    .export-string-box {
-      background: var(--bg); border: 1px solid var(--border);
-      border-radius: var(--rad-sm); padding: 10px;
-      font-family: monospace; font-size: .7rem; color: var(--muted);
-      word-break: break-all; max-height: 80px; overflow-y: auto;
-      margin-bottom: 10px;
-    }
-    .import-paste-input {
-      width: 100%; padding: 10px 12px;
-      background: var(--card); border: 1px solid var(--border);
-      border-radius: var(--rad-sm); color: var(--text);
-      font-family: monospace; font-size: .78rem;
-      min-height: 80px; resize: vertical;
-      margin-bottom: 4px;
-    }
-    .import-paste-input:focus { outline: none; border-color: var(--gold); }
-
-    /* ─── TOAST ───────────────────────────────────────── */
-    .toast {
-      position: fixed; bottom: 82px; left: 50%;
-      transform: translateX(-50%) translateY(16px);
-      background: var(--card); border: 1px solid var(--border);
-      border-radius: 40px; padding: 9px 18px;
-      font-family: 'Cinzel', serif; font-size: .75rem; color: var(--text);
-      pointer-events: none; opacity: 0;
-      transition: opacity .2s, transform .2s;
-      white-space: nowrap; z-index: 200;
-    }
-    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-
-    /* ─── MISC ────────────────────────────────────────── */
-    .divider { height: 1px; background: var(--border); margin: 10px 0; }
-    .spinner { 
-      width: 20px; height: 20px; border: 2px solid var(--border);
-      border-top-color: var(--gold); border-radius: 50%;
-      animation: spin .8s linear infinite; display: inline-block;
-    }
-    @keyframes spin { to { transform: rotate(360deg); } }
+    /* OVERLAYS */
+    .overlay{position:fixed;inset:0;background:rgba(0,0,0,.76);backdrop-filter:blur(3px);display:flex;align-items:flex-end;justify-content:center;z-index:100;opacity:0;pointer-events:none;transition:opacity .2s}
+    .overlay.open{opacity:1;pointer-events:all}
+    .modal{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius) var(--radius) 0 0;padding:22px 18px 32px;width:100%;max-width:480px;max-height:88vh;overflow-y:auto;transform:translateY(24px);transition:transform .25s}
+    .overlay.open .modal{transform:translateY(0)}
+    .modal-title{font-family:'Cinzel',serif;font-size:1.05rem;font-weight:700;color:var(--gold);margin-bottom:14px;text-align:center}
+    .modal-text{color:var(--text);font-style:italic;text-align:center;margin-bottom:14px;font-size:.9rem}
+    .modal-actions{display:flex;gap:8px;margin-top:16px}
+    .modal-actions .btn{flex:1}
+    /* short rest grid */
+    .sr-hd-grid{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:10px 0 14px}
+    .hd-box{width:42px;height:42px;border-radius:var(--rxs);border:2px solid var(--gold-dim);background:rgba(201,153,42,.08);display:flex;align-items:center;justify-content:center;font-family:'Cinzel',serif;font-size:.72rem;font-weight:700;color:var(--gold);cursor:pointer;transition:all .15s;-webkit-tap-highlight-color:transparent;user-select:none;flex-shrink:0}
+    .hd-box.gone{background:var(--border);border-color:var(--border);color:transparent;cursor:default;position:relative}
+    .hd-box.gone::after{content:'✕';position:absolute;font-size:.8rem;color:var(--muted)}
+    .hd-box.check{background:rgba(139,26,26,.5);border-color:#c03030;color:transparent;position:relative}
+    .hd-box.check::after{content:'✕';position:absolute;font-size:.8rem;color:#ff8080}
+    /* number stepper */
+    .num-step{display:flex;align-items:center;gap:10px;margin:10px 0}
+    .num-step button{width:42px;height:42px;border-radius:50%;border:2px solid var(--border);background:var(--card);color:var(--text);font-size:1.3rem;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+    .num-step button:active{border-color:var(--gold)}
+    .num-step input{flex:1;min-width:0;text-align:center;background:var(--card);border:1px solid var(--border);border-radius:var(--rsm);color:var(--text);font-family:'Cinzel',serif;font-size:1.6rem;padding:10px}
+    .num-step input:focus{outline:none;border-color:var(--gold)}
+    .heal-num{font-family:'Cinzel',serif;font-size:1.4rem;font-weight:900;color:var(--heal);text-align:center;margin:4px 0}
+    .heal-sub{font-size:.82rem;color:var(--muted);text-align:center}
+    .heal-sub span{color:var(--gold);font-family:'Cinzel',serif;font-weight:700}
+    /* temp hp stepper */
+    .thp-step{display:flex;align-items:center;gap:10px;margin:14px 0}
+    .thp-step button{width:42px;height:42px;border-radius:50%;border:2px solid var(--border);background:var(--card);color:var(--text);font-size:1.3rem;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+    .thp-step input{flex:1;min-width:0;text-align:center;background:var(--card);border:1px solid var(--border);border-radius:var(--rsm);color:var(--text);font-family:'Cinzel',serif;font-size:1.6rem;padding:10px}
+    .thp-step input:focus{outline:none;border-color:var(--gold)}
+    /* export/import */
+    #qr-container{display:flex;justify-content:center;margin:14px 0}
+    #qr-container canvas,#qr-container img{border-radius:var(--rsm);border:3px solid var(--gold)}
+    .export-box{background:var(--bg);border:1px solid var(--border);border-radius:var(--rsm);padding:10px;font-family:monospace;font-size:.68rem;color:var(--muted);word-break:break-all;max-height:80px;overflow-y:auto;margin-bottom:10px}
+    .import-ta{width:100%;padding:10px 12px;background:var(--card);border:1px solid var(--border);border-radius:var(--rsm);color:var(--text);font-family:monospace;font-size:.78rem;min-height:80px;resize:vertical;margin-bottom:4px}
+    .import-ta:focus{outline:none;border-color:var(--gold)}
+    /* TOAST */
+    .toast{position:fixed;bottom:82px;left:50%;transform:translateX(-50%) translateY(16px);background:var(--card);border:1px solid var(--border);border-radius:40px;padding:9px 18px;font-family:'Cinzel',serif;font-size:.75rem;color:var(--text);pointer-events:none;opacity:0;transition:opacity .2s,transform .2s;white-space:nowrap;z-index:200}
+    .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+    /* SPINNER */
+    .spinner{width:18px;height:18px;border:2px solid var(--border);border-top-color:var(--gold);border-radius:50%;animation:spin .8s linear infinite;display:inline-block;vertical-align:middle;margin-right:6px}
+    @keyframes spin{to{transform:rotate(360deg)}}
   </style>
 </head>
 <body>
 
-<!-- ═══════════════════════════════════════ -->
-<!--  SCREEN: CHARACTER LIST                 -->
-<!-- ═══════════════════════════════════════ -->
+<!-- LIST -->
 <div class="screen active" id="screen-list">
-  <div class="list-header">
-    <h1>⚔ DND Character Tracker</h1>
-    <p>Your adventurers await</p>
-  </div>
+  <div class="list-header"><h1>⚔ DND Character Tracker</h1><p>Your adventurers await</p></div>
   <div class="list-actions">
-    <button class="btn btn-ghost btn-sm" onclick="openOverlay('overlay-import')">📥 Import</button>
     <button class="btn btn-gold" onclick="goCreate(null)" style="flex:2">＋ New Character</button>
+    <button class="btn btn-ghost btn-sm" onclick="openOverlay('ol-import')">📥 Import</button>
   </div>
-  <div class="scroll-body" id="char-list-body"></div>
+  <div class="scroll-body" id="char-list"></div>
 </div>
 
-<!-- ═══════════════════════════════════════ -->
-<!--  SCREEN: CHARACTER SHEET               -->
-<!-- ═══════════════════════════════════════ -->
+<!-- SHEET -->
 <div class="screen" id="screen-sheet">
   <div class="topbar">
     <button class="btn-back" onclick="goList()">←</button>
-    <div style="flex:1; min-width:0;">
-      <div class="topbar-title" id="sheet-name">—</div>
-      <div class="topbar-sub" id="sheet-meta">—</div>
-    </div>
-    <button class="btn btn-ghost btn-sm" id="btn-sheet-menu">⋮</button>
+    <div style="flex:1;min-width:0"><div class="topbar-title" id="sh-name">—</div><div class="topbar-sub" id="sh-meta">—</div></div>
+    <button class="btn btn-ghost btn-sm" id="btn-menu">☰</button>
   </div>
   <div class="scroll-body">
-
-    <!-- HP BLOCK -->
+    <!-- HP -->
     <div class="hp-block">
       <div class="hp-top-row">
-        <div class="ac-shield" title="Armour Class">
-          <span class="ac-shield-icon">🛡</span>
-          <span class="ac-value" id="ac-val">—</span>
+        <div class="ac-wrap" title="Armour Class">
+          <svg viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M22 3L5 9v11c0 10.5 7.3 20.3 17 23 9.7-2.7 17-12.5 17-23V9L22 3z" stroke="#c9992a" stroke-width="1.5" fill="rgba(201,153,42,0.06)"/>
+          </svg>
+          <span class="ac-num" id="ac-num">—</span>
+          <span class="ac-label">AC</span>
         </div>
-        <div class="hp-status-badge" id="hp-badge">✦ Healthy</div>
+        <div class="hp-badge" id="hp-badge">✦ Healthy</div>
       </div>
-      <div class="hp-numbers-row">
-        <span class="hp-current" id="hp-cur">—</span>
+      <div class="hp-nums">
+        <span class="hp-cur" id="hp-cur">—</span>
         <span class="hp-sep">/</span>
-        <span class="hp-max"  id="hp-max">—</span>
-        <span class="hp-label">HP</span>
+        <span class="hp-maxn" id="hp-maxn">—</span>
+        <span class="hp-lbl">HP</span>
       </div>
       <div class="hp-bar-track"><div class="hp-bar-fill" id="hp-bar"></div></div>
       <div class="temp-row">
-        <div class="temp-badge">
-          🛡 Temp HP: <strong id="temp-val">0</strong>
-          <button class="temp-edit-btn" onclick="openTempHp()">✏️</button>
-        </div>
+        <div class="temp-badge">🛡 Temp HP: <strong id="temp-val">0</strong><button class="temp-edit-btn" onclick="openTempHp()">✏️</button></div>
       </div>
       <div class="hp-actions">
         <div class="hp-action-row">
-          <input type="number" id="dmg-input" placeholder="Amount of damage…" min="1" inputmode="numeric">
+          <input type="number" id="dmg-in" placeholder="Damage amount…" min="1" inputmode="numeric">
           <button class="btn btn-ember" onclick="doDamage()">⚔ Damage</button>
         </div>
         <div class="hp-action-row">
-          <input type="number" id="heal-input" placeholder="Amount to heal…" min="1" inputmode="numeric">
+          <input type="number" id="heal-in" placeholder="Heal amount…" min="1" inputmode="numeric">
           <button class="btn btn-heal" onclick="doHeal()">✦ Heal</button>
         </div>
       </div>
-
-      <!-- CONDITIONS (inside HP block) -->
       <div class="cond-divider"></div>
-      <div class="active-conds" id="active-conds-display"></div>
-      <button class="cond-toggle-btn" id="cond-toggle-btn" onclick="toggleCondAccordion()">
-        <span class="chevron">›</span> Conditions
-      </button>
-      <div class="cond-accordion" id="cond-accordion">
-        <div class="conds-grid" id="conds-grid"></div>
-      </div>
+      <div class="active-conds" id="active-conds"></div>
+      <button class="cond-toggle-btn" id="cond-btn" onclick="toggleCondAcc()"><span class="chev">›</span> Manage Conditions</button>
+      <div class="cond-accordion" id="cond-acc"><div class="conds-grid" id="conds-grid"></div></div>
     </div>
 
-    <!-- DEATH SAVES (hidden when HP > 0) -->
+    <!-- DEATH SAVES -->
     <div class="death-card" id="death-card" style="display:none">
       <div class="death-title">☠ Death Saving Throws</div>
-      <div class="ds-row">
-        <div class="ds-label">Successes</div>
-        <div class="ds-boxes" id="ds-successes"></div>
-      </div>
-      <div class="ds-row">
-        <div class="ds-label">Failures</div>
-        <div class="ds-boxes" id="ds-failures"></div>
-      </div>
-      <div style="margin-top:10px; text-align:center">
+      <div class="ds-row"><div class="ds-label">Successes</div><div class="ds-boxes" id="ds-suc"></div></div>
+      <div class="ds-row"><div class="ds-label">Failures</div><div class="ds-boxes" id="ds-fal"></div></div>
+      <div style="margin-top:10px;text-align:center">
         <button class="btn btn-sm" style="background:var(--heal);color:#fff" onclick="stabilize()">⚕ Stabilize (set to 1 HP)</button>
       </div>
     </div>
 
     <!-- ABILITY SCORES -->
-    <div class="card">
-      <div class="card-title">Ability Scores</div>
-      <div class="stats-grid" id="stats-grid"></div>
+    <div class="card"><div class="card-title">Ability Scores</div><div class="stats-grid" id="stats-grid"></div></div>
+
+    <!-- COMBAT -->
+    <div class="card"><div class="card-title">Combat</div><div class="combat-row" id="combat-row"></div></div>
+
+    <!-- SKILLS -->
+    <div class="section-acc">
+      <div class="acc-head" onclick="toggleAcc('skills-body','skills-chev')"><div class="acc-title">🎲 Skills &amp; Proficiencies</div><span class="acc-chev" id="skills-chev">›</span></div>
+      <div class="acc-body" id="skills-body"><div class="acc-inner"><div id="skills-list"></div><div class="passive-row"><span class="passive-lbl">Passive Perception</span><span class="passive-val" id="passive-perc">—</span></div></div></div>
     </div>
 
-    <!-- COMBAT STATS -->
-    <div class="card">
-      <div class="card-title">Combat</div>
-      <div class="combat-row" id="combat-row"></div>
+    <!-- SAVING THROWS -->
+    <div class="section-acc">
+      <div class="acc-head" onclick="toggleAcc('saves-body','saves-chev')"><div class="acc-title">🎯 Saving Throws</div><span class="acc-chev" id="saves-chev">›</span></div>
+      <div class="acc-body" id="saves-body"><div class="acc-inner"><div id="saves-list"></div></div></div>
     </div>
 
-    <!-- SPELL SLOTS (hidden if not caster) -->
+    <!-- SPELLS -->
     <div class="card" id="spell-card" style="display:none">
-      <div class="card-title">Spell Slots</div>
+      <div class="card-title">Spells &amp; Magic</div>
+      <div class="spell-meta-row" id="spell-meta"></div>
       <div id="spell-ui"></div>
     </div>
 
-    <!-- SKILLS (collapsible) -->
-    <div class="section-accordion">
-      <div class="accordion-header" onclick="toggleAccordion('skills-body', 'skills-chev')">
-        <div class="accordion-title">🎲 Skills &amp; Proficiencies</div>
-        <span class="accordion-chevron" id="skills-chev">›</span>
-      </div>
-      <div class="accordion-body" id="skills-body">
-        <div class="accordion-inner">
-          <div class="skills-list" id="skills-list"></div>
-          <div class="passive-row">
-            <span class="passive-label">Passive Perception</span>
-            <span class="passive-val" id="passive-perc">—</span>
-          </div>
-        </div>
-      </div>
-    </div>
-
     <!-- NOTES -->
-    <div class="card">
-      <div class="card-title">Notes</div>
-      <textarea id="notes-area" class="form-input"
-        style="min-height:80px;resize:vertical;font-family:'Crimson Pro',serif;font-size:.95rem"
-        placeholder="Inventory, spells, reminders…"
-        oninput="saveNotes()"></textarea>
+    <div class="card"><div class="card-title">Notes</div>
+      <textarea id="notes-area" class="form-input" style="min-height:80px;resize:vertical;font-family:'Crimson Pro',serif;font-size:.95rem" placeholder="Inventory, spells, reminders…" oninput="saveNotes()"></textarea>
     </div>
-
-  </div><!-- /scroll-body -->
-
+  </div>
   <div class="rest-bar">
-    <button class="btn btn-ghost" onclick="openShortRest()">☽ Short Rest</button>
-    <button class="btn btn-info"  onclick="openOverlay('overlay-long-rest')">☀ Long Rest</button>
+    <button class="btn btn-ghost" onclick="openSR()">☽ Short Rest</button>
+    <button class="btn btn-info" onclick="openOverlay('ol-long-rest')">☀ Long Rest</button>
   </div>
 </div>
 
-<!-- ═══════════════════════════════════════ -->
-<!--  SCREEN: CREATE / EDIT                 -->
-<!-- ═══════════════════════════════════════ -->
+<!-- CREATE / EDIT -->
 <div class="screen" id="screen-create">
   <div class="topbar">
     <button class="btn-back" onclick="cancelCreate()">←</button>
-    <div class="topbar-title" id="create-screen-title">New Character</div>
+    <div class="topbar-title" id="create-title">New Character</div>
   </div>
   <div class="scroll-body">
-
-    <!-- PDF IMPORT -->
-    <div class="pdf-import-area" onclick="document.getElementById('pdf-file-input').click()">
+    <div class="pdf-area" onclick="$('pdf-input').click()">
       <div style="font-size:1.8rem">📄</div>
       <div style="font-family:'Cinzel',serif;font-size:.8rem;color:var(--gold);font-weight:700;margin-top:4px">Import from PDF Character Sheet</div>
-      <p>Tap to upload a PDF and auto-fill the form using AI</p>
+      <p>Tap to upload a PDF — AI will auto-fill the form</p>
     </div>
-    <input type="file" id="pdf-file-input" accept="application/pdf" onchange="handlePdfUpload(event)">
-    <div id="pdf-status" style="display:none;text-align:center;margin-bottom:12px;font-size:.85rem;color:var(--gold)"></div>
+    <input type="file" id="pdf-input" accept="application/pdf" onchange="handlePdf(event)">
+    <div id="pdf-status" style="display:none;text-align:center;margin-bottom:12px;font-size:.85rem;padding:10px;border-radius:var(--rsm);border:1px solid var(--border)"></div>
 
-    <!-- IDENTITY -->
     <div class="form-section">⚔ Identity</div>
-    <div class="form-group">
-      <label class="form-label">Character Name *</label>
-      <input class="form-input" id="f-name" type="text" placeholder="e.g. Thalindra Moonwhisper" maxlength="40">
+    <div class="form-group"><label class="form-label">Character Name *</label><input class="form-input" id="f-name" type="text" placeholder="e.g. Thalindra Moonwhisper" maxlength="40"></div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Race</label><input class="form-input" id="f-race" type="text" placeholder="e.g. Elf"></div>
+      <div class="form-group"><label class="form-label">Class</label><input class="form-input" id="f-class" type="text" placeholder="e.g. Wizard"></div>
     </div>
     <div class="form-row">
-      <div class="form-group">
-        <label class="form-label">Race</label>
-        <input class="form-input" id="f-race" type="text" placeholder="e.g. Elf">
-      </div>
-      <div class="form-group">
-        <label class="form-label">Class</label>
-        <input class="form-input" id="f-class" type="text" placeholder="e.g. Wizard">
-      </div>
+      <div class="form-group"><label class="form-label">Subclass</label><input class="form-input" id="f-subclass" type="text" placeholder="Optional"></div>
+      <div class="form-group"><label class="form-label">Level (1–20)</label><input class="form-input" id="f-level" type="number" min="1" max="20" value="1" inputmode="numeric"></div>
     </div>
-    <div class="form-row">
-      <div class="form-group">
-        <label class="form-label">Subclass</label>
-        <input class="form-input" id="f-subclass" type="text" placeholder="Optional">
-      </div>
-      <div class="form-group">
-        <label class="form-label">Level (1–20)</label>
-        <input class="form-input" id="f-level" type="number" min="1" max="20" value="1" inputmode="numeric">
-      </div>
-    </div>
-    <div class="form-group">
-      <label class="form-label">Background</label>
-      <input class="form-input" id="f-background" type="text" placeholder="e.g. Sage">
-    </div>
+    <div class="form-group"><label class="form-label">Background</label><input class="form-input" id="f-background" type="text" placeholder="e.g. Sage"></div>
 
-    <!-- HEALTH -->
     <div class="form-section">❤ Health</div>
     <div class="form-row">
-      <div class="form-group">
-        <label class="form-label">Max HP *</label>
-        <input class="form-input" id="f-maxhp" type="number" min="1" placeholder="e.g. 42" inputmode="numeric">
-      </div>
-      <div class="form-group">
-        <label class="form-label">Hit Die</label>
+      <div class="form-group"><label class="form-label">Max HP *</label><input class="form-input" id="f-maxhp" type="number" min="1" placeholder="e.g. 42" inputmode="numeric"></div>
+      <div class="form-group"><label class="form-label">Hit Die</label>
         <select class="form-input form-select" id="f-hitdie">
-          <option value="d6">d6 — Sorcerer / Wizard</option>
-          <option value="d8" selected>d8 — Bard / Cleric / Druid / Rogue…</option>
-          <option value="d10">d10 — Fighter / Paladin / Ranger</option>
+          <option value="d6">d6 — Sorc / Wiz</option>
+          <option value="d8" selected>d8 — Bard / Cleric…</option>
+          <option value="d10">d10 — Fighter / Pal…</option>
           <option value="d12">d12 — Barbarian</option>
         </select>
-        <div class="form-hint">Total hit dice = your level (automatic)</div>
+        <div class="form-hint">Hit dice total = level (auto)</div>
       </div>
     </div>
 
-    <!-- COMBAT -->
     <div class="form-section">🛡 Combat</div>
-    <div class="form-row-3">
-      <div class="form-group">
-        <label class="form-label">AC</label>
-        <input class="form-input" id="f-ac" type="number" min="1" placeholder="e.g. 16" inputmode="numeric">
-      </div>
-      <div class="form-group">
-        <label class="form-label">Speed (ft)</label>
-        <input class="form-input" id="f-speed" type="number" placeholder="30" inputmode="numeric">
-      </div>
-      <div class="form-group">
-        <label class="form-label">Prof. Bonus</label>
-        <input class="form-input" id="f-prof" type="number" min="2" max="6" placeholder="auto" inputmode="numeric">
-        <div class="form-hint">Auto from level</div>
-      </div>
+    <div class="form-row3">
+      <div class="form-group"><label class="form-label">AC</label><input class="form-input" id="f-ac" type="number" min="1" placeholder="16" inputmode="numeric"></div>
+      <div class="form-group"><label class="form-label">Speed (ft)</label><input class="form-input" id="f-speed" type="number" placeholder="30" inputmode="numeric"></div>
+      <div class="form-group"><label class="form-label">Prof Bonus</label><input class="form-input" id="f-prof" type="number" min="2" max="6" placeholder="auto" inputmode="numeric"><div class="form-hint">Auto from level</div></div>
     </div>
-    <div class="form-group">
-      <label class="form-label">Initiative Bonus</label>
-      <input class="form-input" id="f-initiative" type="number" placeholder="e.g. +5 (includes DEX mod, feats, etc.)" inputmode="numeric">
-      <div class="form-hint">Total bonus — leave blank to auto-calculate from DEX</div>
-    </div>
+    <div class="form-group"><label class="form-label">Initiative Bonus (total)</label><input class="form-input" id="f-init" type="number" placeholder="Leave blank = auto from DEX" inputmode="numeric"><div class="form-hint">Include DEX mod, feats, etc.</div></div>
 
-    <!-- ABILITY SCORES -->
     <div class="form-section">🎲 Ability Scores</div>
-    <div class="form-row-3">
+    <div class="form-row3">
       <div class="form-group"><label class="form-label">STR</label><input class="form-input" id="f-str" type="number" min="1" max="30" value="10" inputmode="numeric"></div>
       <div class="form-group"><label class="form-label">DEX</label><input class="form-input" id="f-dex" type="number" min="1" max="30" value="10" inputmode="numeric"></div>
       <div class="form-group"><label class="form-label">CON</label><input class="form-input" id="f-con" type="number" min="1" max="30" value="10" inputmode="numeric"></div>
     </div>
-    <div class="form-row-3">
+    <div class="form-row3">
       <div class="form-group"><label class="form-label">INT</label><input class="form-input" id="f-int" type="number" min="1" max="30" value="10" inputmode="numeric"></div>
       <div class="form-group"><label class="form-label">WIS</label><input class="form-input" id="f-wis" type="number" min="1" max="30" value="10" inputmode="numeric"></div>
       <div class="form-group"><label class="form-label">CHA</label><input class="form-input" id="f-cha" type="number" min="1" max="30" value="10" inputmode="numeric"></div>
     </div>
 
-    <!-- SKILLS -->
-    <div class="form-section">🎯 Skills &amp; Proficiencies</div>
-    <div style="display:flex;gap:10px;margin-bottom:10px;font-family:'Cinzel',serif;font-size:.68rem;color:var(--muted);letter-spacing:.06em">
-      <span style="background:transparent;border:1px solid var(--border);border-radius:4px;padding:3px 7px">—  None</span>
-      <span style="background:rgba(26,74,122,.5);border:1px solid #2060c0;color:#80a0ff;border-radius:4px;padding:3px 7px">P  Proficient</span>
-      <span style="background:rgba(201,153,42,.15);border:1px solid var(--gold);color:var(--gold);border-radius:4px;padding:3px 7px">E  Expertise</span>
-    </div>
-    <div class="skills-form-grid" id="skills-form-grid"></div>
+    <div class="form-section">🎯 Saving Throws</div>
+    <div class="form-hint" style="margin-bottom:10px">Mark which saves your class grants proficiency in.</div>
+    <div class="save-form-grid" id="save-form-grid"></div>
 
-    <!-- SPELLS -->
+    <div class="form-section">🎲 Skills</div>
+    <div style="display:flex;gap:8px;margin-bottom:10px;font-family:'Cinzel',serif;font-size:.63rem;color:var(--muted);flex-wrap:wrap">
+      <span style="border:1px solid var(--border);border-radius:4px;padding:3px 7px">— None</span>
+      <span style="background:rgba(26,74,122,.5);border:1px solid #2060c0;color:#80a0ff;border-radius:4px;padding:3px 7px">P Prof.</span>
+      <span style="background:rgba(201,153,42,.15);border:1px solid var(--gold);color:var(--gold);border-radius:4px;padding:3px 7px">E Expertise</span>
+      <span>· Override bonus in number field</span>
+    </div>
+    <div class="skills-form-list" id="skills-form-list"></div>
+
     <div class="form-section">✨ Spellcasting</div>
     <div class="toggle-row">
-      <span class="toggle-label">This character casts spells</span>
-      <button class="toggle" id="spells-toggle" onclick="toggleSpellsForm()"></button>
+      <span style="font-size:.9rem">This character casts spells</span>
+      <button class="toggle" id="spells-toggle" onclick="toggleSpells()"></button>
     </div>
     <div id="spell-slots-form" style="display:none">
-      <div class="form-hint" style="margin-bottom:10px">Enter 0 for spell levels you don't have.</div>
-      <div id="spell-slot-inputs"></div>
+      <div class="form-row" style="margin-bottom:12px">
+        <div class="form-group"><label class="form-label">Spellcasting Ability</label>
+          <select class="form-input form-select" id="f-spell-ability">
+            <option value="int">INT (Wizard, Eldritch Knight…)</option>
+            <option value="wis">WIS (Cleric, Druid, Ranger…)</option>
+            <option value="cha">CHA (Bard, Paladin, Warlock…)</option>
+          </select>
+        </div>
+        <div class="form-group"><label class="form-label">Spell Atk Override</label>
+          <input class="form-input" id="f-spell-atk" type="number" placeholder="Auto-calc" inputmode="numeric">
+          <div class="form-hint">Blank = ability mod + prof</div>
+        </div>
+      </div>
+      <div class="form-hint" style="margin-bottom:10px">Enter slots per level (0 = none):</div>
+      <div id="slot-inputs"></div>
     </div>
 
     <div style="display:flex;gap:8px;margin-top:22px;padding-bottom:30px">
@@ -890,903 +457,664 @@
   </div>
 </div>
 
-<!-- ═══════════════════════════════════════ -->
-<!--  OVERLAYS                              -->
-<!-- ═══════════════════════════════════════ -->
+<!-- OVERLAYS -->
 
 <!-- Short Rest -->
-<div class="overlay" id="overlay-short-rest">
+<div class="overlay" id="ol-short-rest">
   <div class="modal">
     <div class="modal-title">☽ Short Rest</div>
-    <div id="sr-hd-info" style="text-align:center;font-size:.85rem;color:var(--muted);margin-bottom:6px"></div>
-    <div class="hd-modal-row" id="sr-hd-pips"></div>
-    <div style="text-align:center;font-size:.82rem;color:var(--muted);margin-bottom:6px;font-style:italic">
-      Enter the total HP you healed from your dice roll:
+    <div style="text-align:center;font-size:.85rem;color:var(--muted);margin-bottom:4px" id="sr-label"></div>
+    <div style="font-size:.78rem;color:var(--muted);text-align:center;margin-bottom:6px;font-style:italic">Tap dice to mark as spent this rest</div>
+    <div class="sr-hd-grid" id="sr-grid"></div>
+    <div style="font-size:.78rem;color:var(--muted);text-align:center;margin-bottom:6px;font-style:italic">Enter the total HP you healed from your dice rolls:</div>
+    <div class="num-step">
+      <button onclick="adjSR(-1)">−</button>
+      <input type="number" id="sr-heal" value="0" min="0" inputmode="numeric" oninput="updateSRPreview()">
+      <button onclick="adjSR(1)">＋</button>
     </div>
-    <div class="num-stepper">
-      <button onclick="adjustSrHeal(-1)">−</button>
-      <input type="number" id="sr-heal-input" value="0" min="0" inputmode="numeric" oninput="updateSrPreview()">
-      <button onclick="adjustSrHeal(1)">＋</button>
-    </div>
-    <div class="heal-preview-num" id="sr-hp-preview">+0 HP</div>
-    <div class="heal-preview-sub" id="sr-after">After rest: <span>— / —</span></div>
-    <div id="sr-spend-row" style="text-align:center;margin-top:10px;font-size:.82rem;color:var(--muted)"></div>
+    <div class="heal-num" id="sr-prev-num">+0 HP</div>
+    <div class="heal-sub" id="sr-prev-sub">After rest: <span>— / —</span></div>
     <div class="modal-actions">
-      <button class="btn btn-ghost" onclick="closeOverlay('overlay-short-rest')">Cancel</button>
-      <button class="btn btn-heal" onclick="applyShortRest()">Rest &amp; Heal</button>
+      <button class="btn btn-ghost" onclick="cancelSR()">Cancel</button>
+      <button class="btn btn-heal" onclick="applySR()">Rest &amp; Heal</button>
     </div>
   </div>
 </div>
 
 <!-- Long Rest -->
-<div class="overlay" id="overlay-long-rest">
+<div class="overlay" id="ol-long-rest">
   <div class="modal">
     <div class="modal-title">☀ Long Rest</div>
-    <div class="modal-text">Taking a long rest restores all HP, all spell slots, and recovers half your hit dice (minimum 1). Conditions remain. Death saves reset.</div>
-    <div class="modal-text" style="color:var(--gold)">Confirm long rest?</div>
+    <div class="modal-text">Restores all HP, all spell slots, and recovers half your hit dice (min 1). Conditions remain. Death saves reset.</div>
+    <div class="modal-text" style="color:var(--gold)">Confirm?</div>
     <div class="modal-actions">
-      <button class="btn btn-ghost" onclick="closeOverlay('overlay-long-rest')">Cancel</button>
-      <button class="btn btn-gold" onclick="applyLongRest()">Rest</button>
+      <button class="btn btn-ghost" onclick="closeOverlay('ol-long-rest')">Cancel</button>
+      <button class="btn btn-gold" onclick="applyLR()">Rest</button>
     </div>
   </div>
 </div>
 
 <!-- Temp HP -->
-<div class="overlay" id="overlay-temphp">
+<div class="overlay" id="ol-temphp">
   <div class="modal">
     <div class="modal-title">🛡 Temporary HP</div>
-    <div class="modal-text" style="font-size:.82rem">Temp HP absorbs damage first and doesn't stack — take the higher value.</div>
-    <div class="num-stepper">
-      <button onclick="adjustTempHp(-1)">−</button>
-      <input type="number" id="temphp-input" value="0" min="0" inputmode="numeric">
-      <button onclick="adjustTempHp(1)">＋</button>
+    <div class="modal-text" style="font-size:.82rem">Temp HP absorbs damage first and doesn't stack — always take the higher value.</div>
+    <div class="thp-step">
+      <button onclick="adjTHP(-1)">−</button>
+      <input type="number" id="thp-input" value="0" min="0" inputmode="numeric">
+      <button onclick="adjTHP(1)">＋</button>
     </div>
     <div class="modal-actions">
-      <button class="btn btn-ghost" onclick="closeOverlay('overlay-temphp')">Cancel</button>
-      <button class="btn btn-info" onclick="applyTempHp()">Set Temp HP</button>
+      <button class="btn btn-ghost" onclick="closeOverlay('ol-temphp')">Cancel</button>
+      <button class="btn btn-info" onclick="applyTHP()">Set Temp HP</button>
     </div>
   </div>
 </div>
 
-<!-- Delete Confirm -->
-<div class="overlay" id="overlay-delete">
+<!-- Delete -->
+<div class="overlay" id="ol-delete">
   <div class="modal">
     <div class="modal-title" style="color:var(--ember)">Delete Character?</div>
     <div class="modal-text">This cannot be undone. <strong id="del-name"></strong> will be gone forever.</div>
     <div class="modal-actions">
-      <button class="btn btn-ghost" onclick="closeOverlay('overlay-delete')">Cancel</button>
-      <button class="btn btn-danger" onclick="confirmDelete()">Delete</button>
+      <button class="btn btn-ghost" onclick="closeOverlay('ol-delete')">Cancel</button>
+      <button class="btn btn-danger" onclick="doDelete()">Delete</button>
     </div>
   </div>
 </div>
 
 <!-- Export -->
-<div class="overlay" id="overlay-export">
+<div class="overlay" id="ol-export">
   <div class="modal">
     <div class="modal-title">📤 Export Character</div>
-    <div style="font-size:.82rem;color:var(--muted);text-align:center;margin-bottom:8px;font-style:italic">
-      Scan the QR code on another device, or copy the text below for PC transfers.
-    </div>
+    <div style="font-size:.82rem;color:var(--muted);text-align:center;margin-bottom:8px;font-style:italic">Scan QR with another phone, or copy text for PC transfers.</div>
     <div id="qr-container"></div>
-    <div class="export-string-box" id="export-str-box"></div>
+    <div class="export-box" id="export-box"></div>
     <div class="modal-actions">
-      <button class="btn btn-ghost" onclick="closeOverlay('overlay-export')">Close</button>
-      <button class="btn btn-gold" onclick="copyExportString()">📋 Copy</button>
+      <button class="btn btn-ghost" onclick="closeOverlay('ol-export')">Close</button>
+      <button class="btn btn-gold" onclick="copyExport()">📋 Copy</button>
     </div>
   </div>
 </div>
 
 <!-- Import -->
-<div class="overlay" id="overlay-import">
+<div class="overlay" id="ol-import">
   <div class="modal">
     <div class="modal-title">📥 Import Character</div>
-    <div style="font-size:.82rem;color:var(--muted);margin-bottom:10px;font-style:italic;text-align:center">
-      Paste the export code from another device.
-    </div>
-    <textarea class="import-paste-input" id="import-input" placeholder="Paste your character code here…"></textarea>
-    <div id="import-error" style="font-size:.78rem;color:var(--ember);margin-bottom:6px;display:none"></div>
+    <div style="font-size:.82rem;color:var(--muted);margin-bottom:10px;text-align:center;font-style:italic">Paste the export code from another device.</div>
+    <textarea class="import-ta" id="import-input" placeholder="Paste your character code here…"></textarea>
+    <div id="import-err" style="font-size:.78rem;color:var(--ember);margin-bottom:6px;display:none"></div>
     <div class="modal-actions">
-      <button class="btn btn-ghost" onclick="closeOverlay('overlay-import')">Cancel</button>
+      <button class="btn btn-ghost" onclick="closeOverlay('ol-import')">Cancel</button>
       <button class="btn btn-gold" onclick="doImport()">Import</button>
     </div>
   </div>
 </div>
 
-<!-- Toast -->
+<!-- Settings -->
+<div class="overlay" id="ol-settings">
+  <div class="modal">
+    <div class="modal-title">⚙ Settings</div>
+    <div style="font-family:'Cinzel',serif;font-size:.7rem;font-weight:700;color:var(--gold);letter-spacing:.08em;text-transform:uppercase;margin-bottom:10px">Skill Sort Order</div>
+    <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:18px">
+      <label style="display:flex;align-items:center;gap:10px;padding:11px 13px;background:var(--card);border:1px solid var(--border);border-radius:var(--rsm);cursor:pointer">
+        <input type="radio" name="skillsort" value="az" style="accent-color:var(--gold)"> <span style="font-size:.9rem">A – Z</span>
+      </label>
+      <label style="display:flex;align-items:center;gap:10px;padding:11px 13px;background:var(--card);border:1px solid var(--border);border-radius:var(--rsm);cursor:pointer">
+        <input type="radio" name="skillsort" value="stat" style="accent-color:var(--gold)"> <span style="font-size:.9rem">By Ability Score <span style="color:var(--muted);font-size:.78rem">(STR → DEX → CON → INT → WIS → CHA)</span></span>
+      </label>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeOverlay('ol-settings')">Close</button>
+      <button class="btn btn-gold" onclick="saveSettings()">Save</button>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
-<!-- ═══════════════════════════════════════ -->
-<!--  JAVASCRIPT                            -->
-<!-- ═══════════════════════════════════════ -->
 <script>
-// ─── CONSTANTS ─────────────────────────────────────────────────
-const CONDITIONS = [
-  { id: 'blinded',       label: 'Blinded',       icon: '🙈', color: 'cond-orange' },
-  { id: 'charmed',       label: 'Charmed',        icon: '💕', color: 'cond-purple' },
-  { id: 'deafened',      label: 'Deafened',       icon: '🔇', color: 'cond-orange' },
-  { id: 'exhausted1',    label: 'Exhaustion I',   icon: '😰', color: 'cond-yellow' },
-  { id: 'exhausted2',    label: 'Exhaustion II',  icon: '😓', color: 'cond-yellow' },
-  { id: 'exhausted3',    label: 'Exhaustion III', icon: '😵', color: 'cond-yellow' },
-  { id: 'exhausted4',    label: 'Exhaustion IV',  icon: '☠',  color: 'cond-red'    },
-  { id: 'frightened',    label: 'Frightened',     icon: '😱', color: 'cond-red'    },
-  { id: 'grappled',      label: 'Grappled',       icon: '✊', color: 'cond-teal'   },
-  { id: 'incapacitated', label: 'Incapacitated',  icon: '⚡', color: 'cond-red'    },
-  { id: 'invisible',     label: 'Invisible',      icon: '👻', color: 'cond-blue'   },
-  { id: 'paralyzed',     label: 'Paralyzed',      icon: '🧊', color: 'cond-blue'   },
-  { id: 'petrified',     label: 'Petrified',      icon: '🪨', color: 'cond-teal'   },
-  { id: 'poisoned',      label: 'Poisoned',       icon: '☠',  color: 'cond-teal'   },
-  { id: 'prone',         label: 'Prone',          icon: '🛐', color: 'cond-orange' },
-  { id: 'restrained',    label: 'Restrained',     icon: '⛓', color: 'cond-yellow' },
-  { id: 'stunned',       label: 'Stunned',        icon: '💫', color: 'cond-purple' },
-  { id: 'unconscious',   label: 'Unconscious',    icon: '💤', color: 'cond-red'    },
+// ── CONSTANTS ──────────────────────────────────────────────
+const CONDITIONS=[
+  {id:'blinded',     lbl:'Blinded',       ico:'🙈',c:'co'},
+  {id:'charmed',     lbl:'Charmed',        ico:'💕',c:'cp'},
+  {id:'deafened',    lbl:'Deafened',       ico:'🔇',c:'co'},
+  {id:'exh1',        lbl:'Exhaustion I',   ico:'😰',c:'cy'},
+  {id:'exh2',        lbl:'Exhaustion II',  ico:'😓',c:'cy'},
+  {id:'exh3',        lbl:'Exhaustion III', ico:'😵',c:'cy'},
+  {id:'exh4',        lbl:'Exhaustion IV',  ico:'☠', c:'cr'},
+  {id:'frightened',  lbl:'Frightened',     ico:'😱',c:'cr'},
+  {id:'grappled',    lbl:'Grappled',       ico:'✊',c:'ct'},
+  {id:'incapacitated',lbl:'Incapacitated',ico:'⚡',c:'cr'},
+  {id:'invisible',   lbl:'Invisible',      ico:'👻',c:'cb'},
+  {id:'paralyzed',   lbl:'Paralyzed',      ico:'🧊',c:'cb'},
+  {id:'petrified',   lbl:'Petrified',      ico:'🪨',c:'ct'},
+  {id:'poisoned',    lbl:'Poisoned',       ico:'☠', c:'ct'},
+  {id:'prone',       lbl:'Prone',          ico:'🛐',c:'co'},
+  {id:'restrained',  lbl:'Restrained',     ico:'⛓',c:'cy'},
+  {id:'stunned',     lbl:'Stunned',        ico:'💫',c:'cp'},
+  {id:'unconscious', lbl:'Unconscious',    ico:'💤',c:'cr'},
 ];
-
-const SKILLS = [
-  { id: 'acrobatics',    label: 'Acrobatics',      stat: 'dex' },
-  { id: 'animalHandle',  label: 'Animal Handling', stat: 'wis' },
-  { id: 'arcana',        label: 'Arcana',           stat: 'int' },
-  { id: 'athletics',     label: 'Athletics',        stat: 'str' },
-  { id: 'deception',     label: 'Deception',        stat: 'cha' },
-  { id: 'history',       label: 'History',          stat: 'int' },
-  { id: 'insight',       label: 'Insight',          stat: 'wis' },
-  { id: 'intimidation',  label: 'Intimidation',     stat: 'cha' },
-  { id: 'investigation', label: 'Investigation',    stat: 'int' },
-  { id: 'medicine',      label: 'Medicine',         stat: 'wis' },
-  { id: 'nature',        label: 'Nature',           stat: 'int' },
-  { id: 'perception',    label: 'Perception',       stat: 'wis' },
-  { id: 'performance',   label: 'Performance',      stat: 'cha' },
-  { id: 'persuasion',    label: 'Persuasion',       stat: 'cha' },
-  { id: 'religion',      label: 'Religion',         stat: 'int' },
-  { id: 'sleightHand',   label: 'Sleight of Hand',  stat: 'dex' },
-  { id: 'stealth',       label: 'Stealth',          stat: 'dex' },
-  { id: 'survival',      label: 'Survival',         stat: 'wis' },
+const CC={cr:{bd:'#c03030',bg:'#4a0a0a',tx:'#ff8080'},co:{bd:'#c06020',bg:'#4a1a02',tx:'#ffa060'},cb:{bd:'#2060c0',bg:'#061832',tx:'#80a0ff'},cp:{bd:'#7030c0',bg:'#1e0a3a',tx:'#c080ff'},ct:{bd:'#2a9090',bg:'#042626',tx:'#60d0d0'},cy:{bd:'#a09010',bg:'#261c00',tx:'#e0d060'}};
+const SKILLS=[
+  {id:'acrobatics',   lbl:'Acrobatics',    stat:'dex'},
+  {id:'animalHandle', lbl:'Animal Handling',stat:'wis'},
+  {id:'arcana',       lbl:'Arcana',         stat:'int'},
+  {id:'athletics',    lbl:'Athletics',      stat:'str'},
+  {id:'deception',    lbl:'Deception',      stat:'cha'},
+  {id:'history',      lbl:'History',        stat:'int'},
+  {id:'insight',      lbl:'Insight',        stat:'wis'},
+  {id:'intimidation', lbl:'Intimidation',   stat:'cha'},
+  {id:'investigation',lbl:'Investigation',  stat:'int'},
+  {id:'medicine',     lbl:'Medicine',       stat:'wis'},
+  {id:'nature',       lbl:'Nature',         stat:'int'},
+  {id:'perception',   lbl:'Perception',     stat:'wis'},
+  {id:'performance',  lbl:'Performance',    stat:'cha'},
+  {id:'persuasion',   lbl:'Persuasion',     stat:'cha'},
+  {id:'religion',     lbl:'Religion',       stat:'int'},
+  {id:'sleightHand',  lbl:'Sleight of Hand',stat:'dex'},
+  {id:'stealth',      lbl:'Stealth',        stat:'dex'},
+  {id:'survival',     lbl:'Survival',       stat:'wis'},
 ];
+const SAVES=[{stat:'str',lbl:'Strength'},{stat:'dex',lbl:'Dexterity'},{stat:'con',lbl:'Constitution'},{stat:'int',lbl:'Intelligence'},{stat:'wis',lbl:'Wisdom'},{stat:'cha',lbl:'Charisma'}];
+const STAT_ORDER=['str','dex','con','int','wis','cha'];
+const STAT_LABELS={str:'Strength',dex:'Dexterity',con:'Constitution',int:'Intelligence',wis:'Wisdom',cha:'Charisma'};
+const SPELL_LEVELS=['1st','2nd','3rd','4th','5th','6th','7th','8th','9th'];
 
-const SPELL_LEVELS = ['1st','2nd','3rd','4th','5th','6th','7th','8th','9th'];
+// ── STATE ─────────────────────────────────────────────────
+let chars=[], curId=null, editId=null, deleteId=null, spellsOn=false, condOpen=false;
+let srSpends=new Set();
+let settings={skillSort:'az'};
 
-// ─── STATE ─────────────────────────────────────────────────────
-let chars = [];
-let curId = null;
-let editId = null;
-let deleteId = null;
-let spellsOn = false;
-let condAccordionOpen = false;
+// ── UTILS ─────────────────────────────────────────────────
+const $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+const uuid=()=>Math.random().toString(36).slice(2)+Date.now().toString(36);
+const abilMod=v=>Math.floor(((v||10)-10)/2);
+const fmod=m=>m>=0?`+${m}`:`${m}`;
+const clamp=(v,a,b)=>Math.min(b,Math.max(a,v));
+const profLvl=l=>{if(l<5)return 2;if(l<9)return 3;if(l<13)return 4;if(l<17)return 5;return 6;};
+const getChar=id=>chars.find(c=>c.id===id);
 
-// ─── UTILS ─────────────────────────────────────────────────────
-const $  = id => document.getElementById(id);
-const esc = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-function uuid()     { return Math.random().toString(36).slice(2) + Date.now().toString(36); }
-function mod(v)     { return Math.floor(((v||10) - 10) / 2); }
-function fmod(m)    { return m >= 0 ? `+${m}` : `${m}`; }
-function profBonus(lvl) {
-  const l = lvl || 1;
-  if (l < 5) return 2; if (l < 9) return 3; if (l < 13) return 4; if (l < 17) return 5; return 6;
+// ── PERSIST ───────────────────────────────────────────────
+function save(){localStorage.setItem('dnd_v3',JSON.stringify(chars));}
+function load(){
+  const r=localStorage.getItem('dnd_v3');
+  if(r){chars=JSON.parse(r);return;}
+  const old=localStorage.getItem('dnd_chars_v2');
+  chars=old?JSON.parse(old):[];
 }
-function clamp(val, min, max) { return Math.min(max, Math.max(min, val)); }
-function getChar(id) { return chars.find(c => c.id === id); }
-
-// ─── PERSIST ───────────────────────────────────────────────────
-function save() { localStorage.setItem('dnd_chars_v2', JSON.stringify(chars)); }
-function load() {
-  const raw = localStorage.getItem('dnd_chars_v2');
-  chars = raw ? JSON.parse(raw) : [];
+function loadSettings(){const r=localStorage.getItem('dnd_settings');if(r)try{settings={...settings,...JSON.parse(r)};}catch(e){}}
+function saveSettings(){
+  const ch=document.querySelector('input[name="skillsort"]:checked');
+  if(ch)settings.skillSort=ch.value;
+  localStorage.setItem('dnd_settings',JSON.stringify(settings));
+  closeOverlay('ol-settings');
+  if(curId)renderSkills();
+  toast('Settings saved');
 }
-
-// ─── NAVIGATION ────────────────────────────────────────────────
-function showScreen(id) {
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  $(id).classList.add('active');
-}
-
-function goList()  { renderList(); showScreen('screen-list'); }
-function goSheet(id) {
-  curId = id;
-  const c = getChar(id);
-  c.lastUsed = Date.now();
-  save(); renderSheet(); showScreen('screen-sheet');
-}
-function goCreate(eid) {
-  editId = eid;
-  $('create-screen-title').textContent = eid ? 'Edit Character' : 'New Character';
-  fillCreateForm(eid ? getChar(eid) : null);
-  showScreen('screen-create');
-}
-function cancelCreate() {
-  if (editId && curId === editId) goSheet(curId);
-  else goList();
+function openSettingsModal(){
+  document.querySelectorAll('input[name="skillsort"]').forEach(r=>r.checked=r.value===settings.skillSort);
+  openOverlay('ol-settings');
 }
 
-// ─── LIST ──────────────────────────────────────────────────────
-function renderList() {
-  const body = $('char-list-body');
-  if (!chars.length) {
-    body.innerHTML = `<div class="empty-state">
-      <div class="empty-icon">⚔</div>
-      <h3>No Characters Yet</h3>
-      <p>Create your first adventurer or import one from another device.</p>
-      <button class="btn btn-gold" onclick="goCreate(null)">＋ Create Character</button>
-    </div>`;
-    return;
-  }
-  const sorted = [...chars].sort((a,b)=>(b.lastUsed||0)-(a.lastUsed||0));
-  body.innerHTML = sorted.map(c => {
-    const pct = clamp(Math.round((c.currentHp/c.maxHp)*100),0,100);
-    const col = pct>50 ? 'var(--heal)' : pct>25 ? '#dd8030' : 'var(--ember)';
+// ── SCREENS ───────────────────────────────────────────────
+function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));$(id).classList.add('active');}
+function goList(){renderList();showScreen('screen-list');}
+function goSheet(id){curId=id;const c=getChar(id);c.lastUsed=Date.now();save();condOpen=false;renderSheet();showScreen('screen-sheet');}
+function goCreate(eid){editId=eid;$('create-title').textContent=eid?'Edit Character':'New Character';fillCreateForm(eid?getChar(eid):null);showScreen('screen-create');}
+function cancelCreate(){if(editId&&curId===editId)goSheet(curId);else goList();}
+
+// ── LIST ──────────────────────────────────────────────────
+function renderList(){
+  const b=$('char-list');
+  if(!chars.length){b.innerHTML=`<div class="empty-state"><div class="empty-icon">⚔</div><h3>No Characters Yet</h3><p>Create your first adventurer or import one.</p><button class="btn btn-gold" onclick="goCreate(null)">＋ Create Character</button></div>`;return;}
+  b.innerHTML=[...chars].sort((a,b)=>(b.lastUsed||0)-(a.lastUsed||0)).map(c=>{
+    const pct=clamp(Math.round((c.currentHp/c.maxHp)*100),0,100);
+    const col=pct>50?'var(--heal)':pct>25?'#dd8030':'var(--ember)';
     return `<div class="char-card" onclick="goSheet('${c.id}')">
       <div class="char-avatar">${c.name[0].toUpperCase()}</div>
-      <div class="char-info">
-        <div class="char-name">${esc(c.name)}</div>
-        <div class="char-meta">${[c.race,c.charClass,c.level?`Lv ${c.level}`:''].filter(Boolean).join(' · ')}</div>
-        <div style="margin-top:7px;height:4px;background:var(--border);border-radius:2px;overflow:hidden">
-          <div style="height:100%;width:${pct}%;background:${col};border-radius:2px;transition:width .4s"></div>
-        </div>
-      </div>
-      <div class="char-hp-col">
-        <div class="char-hp-val" style="color:${col}">${c.currentHp}</div>
-        <div class="char-hp-sub">/ ${c.maxHp}</div>
-        <div class="char-hp-sub" style="margin-top:2px">HP</div>
-      </div>
+      <div class="char-info"><div class="char-name">${esc(c.name)}</div><div class="char-meta">${[c.race,c.charClass,c.level?`Lv ${c.level}`:''].filter(Boolean).join(' · ')}</div>
+      <div style="margin-top:7px;height:4px;background:var(--border);border-radius:2px;overflow:hidden"><div style="height:100%;width:${pct}%;background:${col};border-radius:2px;transition:width .4s"></div></div></div>
+      <div class="char-hp-col"><div class="char-hp-val" style="color:${col}">${c.currentHp}</div><div class="char-hp-sub">/ ${c.maxHp}</div><div class="char-hp-sub" style="margin-top:2px">HP</div></div>
     </div>`;
   }).join('');
 }
 
-// ─── SHEET RENDER ──────────────────────────────────────────────
-function renderSheet() {
-  const c = getChar(curId);
-  if (!c) return;
-  $('sheet-name').textContent = c.name;
-  $('sheet-meta').textContent = [c.race, c.charClass, c.subclass?`(${c.subclass})`:'', c.level?`Lv ${c.level}`:''].filter(Boolean).join(' · ');
-  renderHp();
-  renderStats();
-  renderCombat();
-  renderSpells();
-  renderConditions();
-  renderDeathSaves();
-  renderSkills();
-  $('notes-area').value = c.notes || '';
-  // reset condition accordion
-  condAccordionOpen = false;
-  $('cond-accordion').classList.remove('open');
-  $('cond-toggle-btn').classList.remove('open');
+// ── SHEET ─────────────────────────────────────────────────
+function renderSheet(){
+  const c=getChar(curId);if(!c)return;
+  $('sh-name').textContent=c.name;
+  $('sh-meta').textContent=[c.race,c.charClass,c.subclass?`(${c.subclass})`:'',c.level?`Lv ${c.level}`:''].filter(Boolean).join(' · ');
+  renderHp();renderStats();renderCombat();renderSpells();renderConds();renderDS();renderSkills();renderSaves();
+  $('notes-area').value=c.notes||'';
+  $('cond-acc').classList.remove('open');$('cond-btn').classList.remove('open');condOpen=false;
 }
 
-function renderHp() {
-  const c = getChar(curId);
-  const { currentHp: cur, maxHp: max } = c;
-  const pct = clamp((cur/max)*100, 0, 100);
-
-  $('hp-cur').textContent = cur;
-  $('hp-max').textContent = max;
-  $('temp-val').textContent = c.tempHp || 0;
-  $('ac-val').textContent = c.ac || '?';
-
-  const bar  = $('hp-bar');
-  const curEl = $('hp-cur');
-  const badge = $('hp-badge');
-
-  curEl.className = 'hp-current';
-  bar.className   = 'hp-bar-fill';
-  bar.style.width = pct + '%';
-
-  if (cur <= 0) {
-    badge.textContent = '💀 Unconscious';
-    badge.style.cssText = 'background:rgba(139,26,26,.3);border-color:#8b1a1a;color:#ff8080';
-    $('death-card').style.display = 'block';
-  } else if (pct <= 25) {
-    curEl.classList.add('critical'); bar.classList.add('critical');
-    badge.textContent = '⚠ Critical';
-    badge.style.cssText = 'background:rgba(192,66,26,.2);border-color:var(--ember);color:#ff8060';
-    $('death-card').style.display = 'none';
-  } else if (pct <= 50) {
-    curEl.classList.add('low'); bar.classList.add('low');
-    badge.textContent = '🩸 Bloodied';
-    badge.style.cssText = 'background:rgba(180,80,20,.15);border-color:#aa6020;color:#e09050';
-    $('death-card').style.display = 'none';
-  } else {
-    badge.textContent = '✦ Healthy';
-    badge.style.cssText = 'background:rgba(42,122,79,.15);border-color:var(--heal);color:#5aaa7a';
-    $('death-card').style.display = 'none';
-  }
+function renderHp(){
+  const c=getChar(curId);
+  const {currentHp:cur,maxHp:max}=c;
+  const pct=clamp((cur/max)*100,0,100);
+  $('hp-cur').textContent=cur; $('hp-maxn').textContent=max; $('temp-val').textContent=c.tempHp||0; $('ac-num').textContent=c.ac||'?';
+  const bar=$('hp-bar'),curEl=$('hp-cur'),badge=$('hp-badge');
+  curEl.className='hp-cur'; bar.className='hp-bar-fill'; bar.style.width=pct+'%';
+  if(cur<=0){badge.textContent='💀 Unconscious';badge.style.cssText='background:rgba(139,26,26,.3);border-color:#8b1a1a;color:#ff8080';$('death-card').style.display='block';}
+  else if(pct<=25){curEl.classList.add('crit');bar.classList.add('crit');badge.textContent='⚠ Critical';badge.style.cssText='background:rgba(192,66,26,.2);border-color:var(--ember);color:#ff8060';$('death-card').style.display='none';}
+  else if(pct<=50){curEl.classList.add('low');bar.classList.add('low');badge.textContent='🩸 Bloodied';badge.style.cssText='background:rgba(180,80,20,.15);border-color:#aa6020;color:#e09050';$('death-card').style.display='none';}
+  else{badge.textContent='✦ Healthy';badge.style.cssText='background:rgba(42,122,79,.15);border-color:var(--heal);color:#5aaa7a';$('death-card').style.display='none';}
 }
 
-function renderStats() {
-  const c = getChar(curId);
-  const defs = [['str','STR'],['dex','DEX'],['con','CON'],['int','INT'],['wis','WIS'],['cha','CHA']];
-  $('stats-grid').innerHTML = defs.map(([k,l]) => {
-    const v = c[k]||10, m = mod(v);
-    const cls = m>0?'pos':m<0?'neg':'';
-    return `<div class="stat-box">
-      <div class="stat-name">${l}</div>
-      <div class="stat-score">${v}</div>
-      <div class="stat-mod ${cls}">${fmod(m)}</div>
-    </div>`;
+function doDamage(){
+  const val=parseInt($('dmg-in').value);if(!val||val<1){toast('Enter a damage amount');return;}
+  const c=getChar(curId);let dmg=val;
+  if(c.tempHp>0){const abs=Math.min(c.tempHp,dmg);c.tempHp-=abs;dmg-=abs;if(abs>0)toast(`🛡 ${abs} absorbed by Temp HP`);}
+  c.currentHp=Math.max(0,c.currentHp-dmg);
+  $('dmg-in').value='';
+  if(c.currentHp<=0){if(!c.conditions)c.conditions=[];if(!c.conditions.includes('unconscious'))c.conditions.push('unconscious');toast('⚠ Down to 0 HP — death saves begin!');}
+  save();renderHp();renderConds();
+}
+function doHeal(){
+  const val=parseInt($('heal-in').value);if(!val||val<1){toast('Enter a heal amount');return;}
+  const c=getChar(curId);const before=c.currentHp;
+  c.currentHp=Math.min(c.maxHp,c.currentHp+val);const actual=c.currentHp-before;
+  if(before<=0&&c.currentHp>0){c.deathSaveSuccesses=0;c.deathSaveFailures=0;c.conditions=(c.conditions||[]).filter(x=>x!=='unconscious');renderDS();}
+  $('heal-in').value='';save();renderHp();renderConds();toast(`✦ Healed ${actual} HP`);
+}
+
+function openTempHp(){$('thp-input').value=getChar(curId).tempHp||0;openOverlay('ol-temphp');}
+function adjTHP(d){const i=$('thp-input');i.value=Math.max(0,(parseInt(i.value)||0)+d);}
+function applyTHP(){const c=getChar(curId);c.tempHp=Math.max(0,parseInt($('thp-input').value)||0);save();renderHp();closeOverlay('ol-temphp');toast(`🛡 Temp HP set to ${c.tempHp}`);}
+
+function renderStats(){
+  const c=getChar(curId);
+  $('stats-grid').innerHTML=[['str','STR'],['dex','DEX'],['con','CON'],['int','INT'],['wis','WIS'],['cha','CHA']].map(([k,l])=>{
+    const v=c[k]||10,m=abilMod(v);
+    return `<div class="stat-box"><div class="stat-name">${l}</div><div class="stat-score">${v}</div><div class="stat-mod ${m>0?'pos':m<0?'neg':''}">${fmod(m)}</div></div>`;
   }).join('');
 }
-
-function renderCombat() {
-  const c = getChar(curId);
-  const prof  = c.profBonus || profBonus(c.level||1);
-  const initB = c.initiativeBonus != null && c.initiativeBonus !== '' ? parseInt(c.initiativeBonus) : mod(c.dex||10);
-  const items = [
-    { v: (c.speed||30)+'ft', l: 'Speed' },
-    { v: fmod(initB),        l: 'Initiative' },
-    { v: '+'+prof,           l: 'Prof Bonus' },
-  ];
-  $('combat-row').innerHTML = items.map(i =>
-    `<div class="cstat"><div class="cstat-val">${i.v}</div><div class="cstat-label">${i.l}</div></div>`
-  ).join('');
+function renderCombat(){
+  const c=getChar(curId);
+  const prof=c.profBonus||profLvl(c.level||1);
+  const init=c.initiativeBonus!=null&&c.initiativeBonus!==''?parseInt(c.initiativeBonus):abilMod(c.dex||10);
+  const hdLeft=Math.max(0,(c.level||1)-(c.hitDiceUsed||0));
+  $('combat-row').innerHTML=[
+    {v:(c.speed||30)+'ft',l:'Speed'},{v:fmod(init),l:'Initiative'},{v:'+'+prof,l:'Prof Bonus'},{v:`${hdLeft}/${c.level||1} ${c.hitDie||'d8'}`,l:'Hit Dice Left'},
+  ].map(i=>`<div class="cstat"><div class="cstat-val">${i.v}</div><div class="cstat-label">${i.l}</div></div>`).join('');
 }
-
-function renderSpells() {
-  const c = getChar(curId);
-  const hasSlots = c.maxSpellSlots && c.maxSpellSlots.some(s=>s>0);
-  $('spell-card').style.display = hasSlots ? 'block' : 'none';
-  if (!hasSlots) return;
-
-  $('spell-ui').innerHTML = c.maxSpellSlots.map((max, i) => {
-    if (!max) return '';
-    const used = (c.usedSpellSlots||[])[i]||0;
-    const pips = Array.from({length:max}, (_,j) => {
-      const u = j < used;
-      return `<div class="slot-pip ${u?'used':''}" onclick="toggleSlot(${i},${j})" title="${u?'Used':'Available'}"></div>`;
-    }).join('');
-    return `<div class="spell-level-row">
-      <div class="spell-lvl-lbl">${SPELL_LEVELS[i]}</div>
-      <div class="spell-bubbles">${pips}</div>
-      <div class="spell-count">${max-used}/${max}</div>
-    </div>`;
+function renderSpells(){
+  const c=getChar(curId);
+  const hasSlots=c.maxSpellSlots&&c.maxSpellSlots.some(s=>s>0);
+  $('spell-card').style.display=hasSlots?'block':'none';if(!hasSlots)return;
+  const prof=c.profBonus||profLvl(c.level||1);
+  const abilKey=c.spellAbility||'int';
+  const abilM=abilMod(c[abilKey]||10);
+  const atk=c.spellAtkOverride!=null&&c.spellAtkOverride!==''?parseInt(c.spellAtkOverride):(abilM+prof);
+  const dc=8+prof+abilM;
+  $('spell-meta').innerHTML=`<div class="spell-meta-box"><div class="spell-meta-val">${fmod(atk)}</div><div class="spell-meta-label">Spell Attack</div></div><div class="spell-meta-box"><div class="spell-meta-val">${dc}</div><div class="spell-meta-label">Spell Save DC</div></div>`;
+  $('spell-ui').innerHTML=c.maxSpellSlots.map((max,i)=>{
+    if(!max)return'';
+    const used=(c.usedSpellSlots||[])[i]||0;
+    const pips=Array.from({length:max},(_,j)=>{const u=j<used;return`<div class="slot-pip ${u?'used':''}" onclick="toggleSlot(${i},${j})"></div>`;}).join('');
+    return`<div class="spell-level-row"><div class="spell-lvl-lbl">${SPELL_LEVELS[i]}</div><div class="spell-bubbles">${pips}</div><div class="spell-count">${max-used}/${max}</div></div>`;
   }).join('');
 }
-
-function toggleSlot(lvl, idx) {
-  const c = getChar(curId);
-  if (!c.usedSpellSlots) c.usedSpellSlots = Array(9).fill(0);
-  const used = c.usedSpellSlots[lvl];
-  c.usedSpellSlots[lvl] = idx < used ? Math.max(0,used-1) : Math.min(c.maxSpellSlots[lvl], used+1);
-  save(); renderSpells();
+function toggleSlot(lvl,idx){
+  const c=getChar(curId);if(!c.usedSpellSlots)c.usedSpellSlots=Array(9).fill(0);
+  const used=c.usedSpellSlots[lvl];c.usedSpellSlots[lvl]=idx<used?Math.max(0,used-1):Math.min(c.maxSpellSlots[lvl],used+1);
+  save();renderSpells();
 }
 
-function renderConditions() {
-  const c = getChar(curId);
-  const active = c.conditions || [];
-
-  // Active chips in HP block
-  const dispEl = $('active-conds-display');
-  if (active.length === 0) {
-    dispEl.innerHTML = '<span class="no-conds">No active conditions</span>';
-  } else {
-    dispEl.innerHTML = active.map(id => {
-      const def = CONDITIONS.find(d=>d.id===id);
-      if (!def) return '';
-      const colorMap = {
-        'cond-red':'#ff8080','cond-orange':'#ffa060','cond-blue':'#80a0ff',
-        'cond-purple':'#c080ff','cond-teal':'#60d0d0','cond-yellow':'#e0d060'
-      };
-      const borderMap = {
-        'cond-red':'#c03030','cond-orange':'#c06020','cond-blue':'#2060c0',
-        'cond-purple':'#7030c0','cond-teal':'#2a9090','cond-yellow':'#a09010'
-      };
-      return `<span class="active-cond-chip" style="border-color:${borderMap[def.color]};color:${colorMap[def.color]};background:${borderMap[def.color]}22">${def.icon} ${def.label}</span>`;
+function renderConds(){
+  const c=getChar(curId);const active=c.conditions||[];
+  const disp=$('active-conds');
+  if(!active.length){disp.innerHTML='<span class="no-conds">No active conditions</span>';}
+  else{
+    disp.innerHTML=active.map(id=>{
+      const d=CONDITIONS.find(x=>x.id===id);if(!d)return'';
+      const cc=CC[d.c]||CC.cr;
+      return`<span class="active-chip" style="border-color:${cc.bd};color:${cc.tx};background:${cc.bg}22" onclick="removeCond('${id}')" title="Tap to remove">${d.ico} ${d.lbl} ✕</span>`;
     }).join('');
   }
+  $('conds-grid').innerHTML=CONDITIONS.map(d=>{const on=active.includes(d.id);return`<div class="cond-chip ${on?'on '+d.c:''}" onclick="toggleCond('${d.id}')">${d.ico} ${d.lbl}</div>`;}).join('');
+}
+function removeCond(id){const c=getChar(curId);c.conditions=(c.conditions||[]).filter(x=>x!==id);save();renderConds();const d=CONDITIONS.find(x=>x.id===id);toast(`${d?.ico||''} ${d?.lbl||id} removed`);}
+function toggleCond(id){const c=getChar(curId);if(!c.conditions)c.conditions=[];if(c.conditions.includes(id))removeCond(id);else{c.conditions.push(id);save();renderConds();}}
+function toggleCondAcc(){condOpen=!condOpen;$('cond-acc').classList.toggle('open',condOpen);$('cond-btn').classList.toggle('open',condOpen);}
 
-  // Full toggle grid
-  $('conds-grid').innerHTML = CONDITIONS.map(d => {
-    const on = active.includes(d.id);
-    return `<div class="cond-chip ${on?'active '+d.color:''}" onclick="toggleCond('${d.id}')">${d.icon} ${d.label}</div>`;
+function renderDS(){
+  const c=getChar(curId);const s=c.deathSaveSuccesses||0,f=c.deathSaveFailures||0;
+  $('ds-suc').innerHTML=[0,1,2].map(i=>`<div class="ds-box suc ${i<s?'on':''}" onclick="toggleDS('suc',${i})">${i<s?'✓':''}</div>`).join('');
+  $('ds-fal').innerHTML=[0,1,2].map(i=>`<div class="ds-box fal ${i<f?'on':''}" onclick="toggleDS('fal',${i})">${i<f?'✕':''}</div>`).join('');
+}
+function toggleDS(type,idx){
+  const c=getChar(curId);const key=type==='suc'?'deathSaveSuccesses':'deathSaveFailures';const cur=c[key]||0;
+  c[key]=idx<cur?Math.max(0,cur-1):Math.min(3,cur+1);
+  if(c.deathSaveSuccesses>=3)toast('⚕ Stabilized!');if(c.deathSaveFailures>=3)toast('💀 Three failures — character has died');
+  save();renderDS();
+}
+function stabilize(){
+  const c=getChar(curId);c.currentHp=1;c.deathSaveSuccesses=0;c.deathSaveFailures=0;
+  c.conditions=(c.conditions||[]).filter(x=>x!=='unconscious');
+  save();renderHp();renderDS();renderConds();toast('⚕ Stabilized at 1 HP');
+}
+
+function renderSkills(){
+  const c=getChar(curId);
+  const prof=c.profBonus||profLvl(c.level||1);
+  const sp=c.skills||{},so=c.skillOverrides||{};
+  let html='';
+  if(settings.skillSort==='stat'){
+    const groups={};STAT_ORDER.forEach(s=>groups[s]=[]);SKILLS.forEach(sk=>groups[sk.stat].push(sk));
+    html=STAT_ORDER.map(stat=>{
+      if(!groups[stat].length)return'';
+      return`<div class="skill-grp-header">${STAT_LABELS[stat]}</div>`+groups[stat].map(sk=>skRow(sk,c,prof,sp,so)).join('');
+    }).join('');
+  }else{
+    html=[...SKILLS].sort((a,b)=>a.lbl.localeCompare(b.lbl)).map(sk=>skRow(sk,c,prof,sp,so)).join('');
+  }
+  $('skills-list').innerHTML=html;
+  const percProf=sp['perception']||0,percOver=so['perception'];
+  const percBonus=percOver!=null?percOver:(abilMod(c.wis||10)+(percProf===2?prof*2:percProf===1?prof:0));
+  $('passive-perc').textContent=10+percBonus;
+}
+function skRow(sk,c,prof,sp,so){
+  const base=abilMod(c[sk.stat]||10),lv=sp[sk.id]||0,ov=so[sk.id];
+  const bonus=ov!=null?ov:(base+(lv===2?prof*2:lv===1?prof:0));
+  const ico=lv===2?'★':lv===1?'◉':'○';
+  const ic=lv===2?'var(--gold)':lv===1?'#80a0ff':'var(--border)';
+  const bc=bonus>0?'pos':bonus<0?'neg':'z';
+  return`<div class="skill-row"><div class="skill-left"><span class="skill-icon" style="color:${ic}">${ico}</span><span class="skill-nm">${sk.lbl}</span><span class="skill-stag">${sk.stat.toUpperCase()}</span></div><span class="skill-bonus ${bc}">${fmod(bonus)}</span></div>`;
+}
+function renderSaves(){
+  const c=getChar(curId);const prof=c.profBonus||profLvl(c.level||1);
+  const sp=c.saveProfs||{},so=c.saveOverrides||{};
+  $('saves-list').innerHTML=SAVES.map(s=>{
+    const base=abilMod(c[s.stat]||10),hasp=sp[s.stat]||false,ov=so[s.stat];
+    const bonus=ov!=null?ov:(base+(hasp?prof:0));
+    const ico=hasp?'◉':'○',ic=hasp?'#80a0ff':'var(--border)';
+    const bc=bonus>0?'pos':bonus<0?'neg':'z';
+    return`<div class="skill-row"><div class="skill-left"><span class="skill-icon" style="color:${ic}">${ico}</span><span class="skill-nm">${s.lbl}</span><span class="skill-stag">${s.stat.toUpperCase()}</span></div><span class="skill-bonus ${bc}">${fmod(bonus)}</span></div>`;
   }).join('');
 }
 
-function toggleCond(id) {
-  const c = getChar(curId);
-  if (!c.conditions) c.conditions = [];
-  if (c.conditions.includes(id)) c.conditions = c.conditions.filter(x=>x!==id);
-  else c.conditions.push(id);
-  save(); renderConditions();
+// ── SHORT REST ────────────────────────────────────────────
+function openSR(){
+  const c=getChar(curId);const total=c.level||1,used=c.hitDiceUsed||0,left=total-used;
+  if(left<=0){toast('No hit dice remaining!');return;}
+  srSpends=new Set();
+  $('sr-label').innerHTML=`Hit Dice (${c.hitDie||'d8'}) &nbsp;·&nbsp; <strong style="color:var(--gold)">${left}</strong> of ${total} remaining`;
+  renderSRGrid();$('sr-heal').value=0;updateSRPreview();openOverlay('ol-short-rest');
 }
-
-function toggleCondAccordion() {
-  condAccordionOpen = !condAccordionOpen;
-  $('cond-accordion').classList.toggle('open', condAccordionOpen);
-  $('cond-toggle-btn').classList.toggle('open', condAccordionOpen);
-}
-
-function renderDeathSaves() {
-  const c = getChar(curId);
-  const s = c.deathSaveSuccesses || 0;
-  const f = c.deathSaveFailures  || 0;
-  $('ds-successes').innerHTML = [0,1,2].map(i =>
-    `<div class="ds-box success ${i<s?'filled':''}" onclick="toggleDs('success',${i})">${i<s?'✓':''}</div>`
-  ).join('');
-  $('ds-failures').innerHTML  = [0,1,2].map(i =>
-    `<div class="ds-box fail ${i<f?'filled':''}" onclick="toggleDs('fail',${i})">${i<f?'✕':''}</div>`
-  ).join('');
-}
-
-function toggleDs(type, idx) {
-  const c = getChar(curId);
-  const key = type==='success' ? 'deathSaveSuccesses' : 'deathSaveFailures';
-  const cur = c[key]||0;
-  c[key] = idx < cur ? Math.max(0,cur-1) : Math.min(3,cur+1);
-  if (c.deathSaveSuccesses>=3) toast('⚕ Stabilized — you are stable!');
-  if (c.deathSaveFailures>=3)  toast('💀 Three failures — character has died');
-  save(); renderDeathSaves();
-}
-
-function stabilize() {
-  const c = getChar(curId);
-  c.currentHp = 1; c.deathSaveSuccesses = 0; c.deathSaveFailures = 0;
-  save(); renderHp(); renderDeathSaves(); toast('⚕ Stabilized at 1 HP');
-}
-
-function renderSkills() {
-  const c = getChar(curId);
-  const prof  = c.profBonus || profBonus(c.level||1);
-  const skillProfs = c.skills || {};
-
-  $('skills-list').innerHTML = SKILLS.map(sk => {
-    const base  = mod(c[sk.stat]||10);
-    const level = skillProfs[sk.id] || 0;
-    const bonus = base + (level===2 ? prof*2 : level===1 ? prof : 0);
-    const icon  = level===2 ? '★' : level===1 ? '◉' : '○';
-    const icCol = level===2 ? 'var(--gold)' : level===1 ? '#80a0ff' : 'var(--border)';
-    const bCls  = bonus>0?'pos':bonus<0?'neg':'zero';
-    return `<div class="skill-row">
-      <div class="skill-left">
-        <span class="skill-prof-icon" style="color:${icCol}">${icon}</span>
-        <span class="skill-name-text">${sk.label}</span>
-        <span class="skill-stat-tag">${sk.stat.toUpperCase()}</span>
-      </div>
-      <span class="skill-bonus ${bCls}">${fmod(bonus)}</span>
-    </div>`;
+function renderSRGrid(){
+  const c=getChar(curId);const total=c.level||1,used=c.hitDiceUsed||0;
+  $('sr-grid').innerHTML=Array.from({length:total},(_,i)=>{
+    const gone=i<used,check=srSpends.has(i);
+    let cls='hd-box';if(gone)cls+=' gone';else if(check)cls+=' check';
+    return`<div class="${cls}" onclick="toggleSRDie(${i})">${(!gone&&!check)?(c.hitDie||'d8'):''}</div>`;
   }).join('');
-
-  // Passive perception
-  const percProf = skillProfs['perception'] || 0;
-  const percBonus = mod(c.wis||10) + (percProf===2 ? prof*2 : percProf===1 ? prof : 0);
-  $('passive-perc').textContent = 10 + percBonus;
+}
+function toggleSRDie(idx){
+  const c=getChar(curId);if(idx<(c.hitDiceUsed||0))return;
+  srSpends.has(idx)?srSpends.delete(idx):srSpends.add(idx);renderSRGrid();
+}
+function adjSR(d){const i=$('sr-heal');i.value=Math.max(0,(parseInt(i.value)||0)+d);updateSRPreview();}
+function updateSRPreview(){
+  const c=getChar(curId);const amt=Math.max(0,parseInt($('sr-heal').value)||0);
+  const after=Math.min(c.maxHp,c.currentHp+amt);
+  $('sr-prev-num').textContent=`+${after-c.currentHp} HP`;
+  $('sr-prev-sub').innerHTML=`After rest: <span>${after} / ${c.maxHp}</span>`;
+}
+function cancelSR(){srSpends=new Set();closeOverlay('ol-short-rest');}
+function applySR(){
+  const c=getChar(curId);
+  c.hitDiceUsed=(c.hitDiceUsed||0)+srSpends.size;
+  const amt=Math.max(0,parseInt($('sr-heal').value)||0);
+  if(amt>0){const before=c.currentHp;c.currentHp=Math.min(c.maxHp,c.currentHp+amt);toast(`☽ Short rest — healed ${c.currentHp-before} HP`);}
+  else toast('☽ Short rest taken');
+  srSpends=new Set();save();renderHp();renderCombat();closeOverlay('ol-short-rest');
 }
 
-// ─── HP ACTIONS ────────────────────────────────────────────────
-function doDamage() {
-  const val = parseInt($('dmg-input').value);
-  if (!val || val<1) { toast('Enter a damage amount'); return; }
-  const c = getChar(curId);
-  let dmg = val;
-  if (c.tempHp > 0) {
-    const absorbed = Math.min(c.tempHp, dmg);
-    c.tempHp -= absorbed; dmg -= absorbed;
-    if (absorbed>0) toast(`🛡 ${absorbed} absorbed by Temp HP`);
-  }
-  c.currentHp = Math.max(0, c.currentHp - dmg);
-  $('dmg-input').value = '';
-  save(); renderHp();
-  if (c.currentHp <= 0) toast('⚠ Down to 0 HP — make death saves!');
+// ── LONG REST ─────────────────────────────────────────────
+function applyLR(){
+  const c=getChar(curId);c.currentHp=c.maxHp;c.tempHp=0;
+  if(c.maxSpellSlots)c.usedSpellSlots=Array(9).fill(0);
+  const rec=Math.max(1,Math.floor((c.level||1)/2));c.hitDiceUsed=Math.max(0,(c.hitDiceUsed||0)-rec);
+  c.deathSaveSuccesses=0;c.deathSaveFailures=0;
+  c.conditions=(c.conditions||[]).filter(x=>x!=='unconscious');
+  save();renderSheet();closeOverlay('ol-long-rest');toast('☀ Long rest — fully restored!');
 }
 
-function doHeal() {
-  const val = parseInt($('heal-input').value);
-  if (!val || val<1) { toast('Enter a heal amount'); return; }
-  const c = getChar(curId);
-  const before = c.currentHp;
-  c.currentHp = Math.min(c.maxHp, c.currentHp + val);
-  const actual = c.currentHp - before;
-  if (before<=0 && c.currentHp>0) { c.deathSaveSuccesses=0; c.deathSaveFailures=0; renderDeathSaves(); }
-  $('heal-input').value = '';
-  save(); renderHp(); toast(`✦ Healed ${actual} HP`);
-}
+// ── NOTES ─────────────────────────────────────────────────
+let notesT;
+function saveNotes(){clearTimeout(notesT);notesT=setTimeout(()=>{const c=getChar(curId);if(c){c.notes=$('notes-area').value;save();}},700);}
 
-// ─── TEMP HP ───────────────────────────────────────────────────
-function openTempHp() {
-  $('temphp-input').value = getChar(curId).tempHp || 0;
-  openOverlay('overlay-temphp');
-}
-function adjustTempHp(d) {
-  const i = $('temphp-input');
-  i.value = Math.max(0, (parseInt(i.value)||0)+d);
-}
-function applyTempHp() {
-  const c = getChar(curId);
-  c.tempHp = Math.max(0, parseInt($('temphp-input').value)||0);
-  save(); renderHp(); closeOverlay('overlay-temphp'); toast(`🛡 Temp HP set to ${c.tempHp}`);
-}
+// ── ACCORDION ─────────────────────────────────────────────
+function toggleAcc(bId,cId){const b=$(bId),ch=$(cId);const open=b.classList.toggle('open');ch.classList.toggle('open',open);}
 
-// ─── SHORT REST ────────────────────────────────────────────────
-function openShortRest() {
-  const c = getChar(curId);
-  const total = c.level || 1;
-  const used  = c.hitDiceUsed || 0;
-  const left  = total - used;
-  if (left <= 0) { toast('No hit dice remaining!'); return; }
-  $('sr-hd-info').innerHTML = `Hit Dice: <strong style="font-family:'Cinzel',serif;color:var(--gold)">${c.hitDie||'d8'}</strong> &nbsp;·&nbsp; <strong style="font-family:'Cinzel',serif;color:var(--gold)">${left}</strong> of ${total} remaining`;
-  // Build hit dice pips
-  $('sr-hd-pips').innerHTML = Array.from({length:total}, (_,i) =>
-    `<div class="hd-pip ${i<used?'used':''}">${i<used?'✕':(c.hitDie||'d8')}</div>`
-  ).join('');
-  $('sr-heal-input').value = 0;
-  updateSrPreview();
-  openOverlay('overlay-short-rest');
-}
-
-function adjustSrHeal(d) {
-  const i = $('sr-heal-input');
-  i.value = Math.max(0, (parseInt(i.value)||0)+d);
-  updateSrPreview();
-}
-
-function updateSrPreview() {
-  const c = getChar(curId);
-  const amount = Math.max(0, parseInt($('sr-heal-input').value)||0);
-  const after  = Math.min(c.maxHp, c.currentHp + amount);
-  const actual = after - c.currentHp;
-  $('sr-hp-preview').textContent = `+${actual} HP`;
-  $('sr-after').innerHTML = `After rest: <span>${after} / ${c.maxHp}</span>`;
-}
-
-function applyShortRest() {
-  const c = getChar(curId);
-  const amount = Math.max(0, parseInt($('sr-heal-input').value)||0);
-  c.hitDiceUsed = Math.min(c.level||1, (c.hitDiceUsed||0)+1);
-  if (amount > 0) {
-    const before = c.currentHp;
-    c.currentHp = Math.min(c.maxHp, c.currentHp + amount);
-    toast(`☽ Short rest — healed ${c.currentHp - before} HP`);
-  } else {
-    toast('☽ Short rest taken');
-  }
-  save(); renderHp(); renderCombat();
-  closeOverlay('overlay-short-rest');
-}
-
-// ─── LONG REST ────────────────────────────────────────────────
-function applyLongRest() {
-  const c = getChar(curId);
-  c.currentHp = c.maxHp; c.tempHp = 0;
-  if (c.maxSpellSlots) c.usedSpellSlots = Array(9).fill(0);
-  const recover = Math.max(1, Math.floor((c.level||1)/2));
-  c.hitDiceUsed = Math.max(0, (c.hitDiceUsed||0) - recover);
-  c.deathSaveSuccesses = 0; c.deathSaveFailures = 0;
-  save(); renderSheet();
-  closeOverlay('overlay-long-rest');
-  toast('☀ Long rest — fully restored!');
-}
-
-// ─── NOTES ────────────────────────────────────────────────────
-let notesTimer;
-function saveNotes() {
-  clearTimeout(notesTimer);
-  notesTimer = setTimeout(() => {
-    const c = getChar(curId); if (!c) return;
-    c.notes = $('notes-area').value; save();
-  }, 700);
-}
-
-// ─── ACCORDION ────────────────────────────────────────────────
-function toggleAccordion(bodyId, chevId) {
-  const body = $(bodyId), chev = $(chevId);
-  const open = body.classList.toggle('open');
-  chev.classList.toggle('open', open);
-}
-
-// ─── SHEET MENU (edit/export/delete) ──────────────────────────
-$('btn-sheet-menu').addEventListener('click', () => {
-  const c = getChar(curId);
-  const overlay = document.createElement('div');
-  overlay.className = 'overlay open';
-  overlay.style.zIndex = 200;
-  overlay.innerHTML = `<div class="modal">
-    <div class="modal-title">${esc(c.name)}</div>
+// ── SHEET MENU ────────────────────────────────────────────
+$('btn-menu').addEventListener('click',()=>{
+  const c=getChar(curId);
+  const ov=document.createElement('div');ov.className='overlay open';ov.style.zIndex=200;
+  ov.innerHTML=`<div class="modal"><div class="modal-title">${esc(c.name)}</div>
     <div style="display:flex;flex-direction:column;gap:8px">
-      <button class="btn btn-ghost" style="text-align:left;padding:13px 16px;border-radius:9px;justify-content:flex-start"
-        onclick="this.closest('.overlay').remove();goCreate('${c.id}')">✏️ &nbsp;Edit Character</button>
-      <button class="btn btn-ghost" style="text-align:left;padding:13px 16px;border-radius:9px;justify-content:flex-start"
-        onclick="this.closest('.overlay').remove();doExport('${c.id}')">📤 &nbsp;Export / Share</button>
-      <button class="btn btn-danger" style="text-align:left;padding:13px 16px;border-radius:9px;justify-content:flex-start"
-        onclick="this.closest('.overlay').remove();openDelete('${c.id}')">🗑 &nbsp;Delete Character</button>
-      <button class="btn btn-ghost" style="text-align:left;padding:13px 16px;border-radius:9px;justify-content:flex-start"
-        onclick="this.closest('.overlay').remove()">✕ &nbsp;Cancel</button>
-    </div>
-  </div>`;
-  overlay.addEventListener('click', e => { if (e.target===overlay) overlay.remove(); });
-  document.body.appendChild(overlay);
+      <button class="btn btn-ghost" style="text-align:left;padding:13px 16px;border-radius:9px;justify-content:flex-start" onclick="this.closest('.overlay').remove();goCreate('${c.id}')">✏️ &nbsp;Edit Character</button>
+      <button class="btn btn-ghost" style="text-align:left;padding:13px 16px;border-radius:9px;justify-content:flex-start" onclick="this.closest('.overlay').remove();doExport('${c.id}')">📤 &nbsp;Export / Share</button>
+      <button class="btn btn-ghost" style="text-align:left;padding:13px 16px;border-radius:9px;justify-content:flex-start" onclick="this.closest('.overlay').remove();openSettingsModal()">⚙ &nbsp;Settings</button>
+      <button class="btn btn-danger" style="text-align:left;padding:13px 16px;border-radius:9px;justify-content:flex-start" onclick="this.closest('.overlay').remove();openDelete('${c.id}')">🗑 &nbsp;Delete Character</button>
+      <button class="btn btn-ghost" style="text-align:left;padding:13px 16px;border-radius:9px;justify-content:flex-start" onclick="this.closest('.overlay').remove()">✕ &nbsp;Cancel</button>
+    </div></div>`;
+  ov.addEventListener('click',e=>{if(e.target===ov)ov.remove();});document.body.appendChild(ov);
 });
 
-// ─── DELETE ───────────────────────────────────────────────────
-function openDelete(id) {
-  deleteId = id;
-  $('del-name').textContent = getChar(id)?.name || '';
-  openOverlay('overlay-delete');
+// ── DELETE ────────────────────────────────────────────────
+function openDelete(id){deleteId=id;$('del-name').textContent=getChar(id)?.name||'';openOverlay('ol-delete');}
+function doDelete(){chars=chars.filter(c=>c.id!==deleteId);save();closeOverlay('ol-delete');goList();toast('Character deleted');}
+
+// ── EXPORT / IMPORT ───────────────────────────────────────
+async function doExport(id){
+  const c=getChar(id);if(!c)return;
+  try{
+    const comp=await compressStr(JSON.stringify(c));
+    $('export-box').textContent=comp;
+    const q=$('qr-container');q.innerHTML='';
+    new QRCode(q,{text:comp,width:200,height:200,colorDark:'#c9992a',colorLight:'#13161f',correctLevel:QRCode.CorrectLevel.M});
+    openOverlay('ol-export');
+  }catch(e){toast('Export failed: '+e.message);}
 }
-function confirmDelete() {
-  chars = chars.filter(c=>c.id!==deleteId);
-  save(); closeOverlay('overlay-delete'); goList(); toast('Character deleted');
+function copyExport(){
+  const txt=$('export-box').textContent;
+  navigator.clipboard.writeText(txt).then(()=>toast('📋 Copied!')).catch(()=>{const t=document.createElement('textarea');t.value=txt;document.body.appendChild(t);t.select();document.execCommand('copy');document.body.removeChild(t);toast('📋 Copied!');});
+}
+async function doImport(){
+  const raw=$('import-input').value.trim();$('import-err').style.display='none';
+  if(!raw){showImpErr('Paste your export code first');return;}
+  try{
+    const json=await decompressStr(raw);const c=JSON.parse(json);
+    if(!c.id||!c.name)throw new Error('bad');
+    if(chars.find(x=>x.id===c.id)){c.id=uuid();c.name=c.name+' (imported)';}
+    chars.push(c);save();closeOverlay('ol-import');$('import-input').value='';goList();toast(`✦ ${c.name} imported!`);
+  }catch(e){showImpErr('Invalid code — copy the full export text');}
+}
+function showImpErr(m){const e=$('import-err');e.textContent=m;e.style.display='block';}
+
+async function compressStr(str){
+  const enc=new TextEncoder().encode(str);
+  const cs=new CompressionStream('deflate-raw');const w=cs.writable.getWriter();w.write(enc);w.close();
+  const buf=await new Response(cs.readable).arrayBuffer();
+  let bin='';new Uint8Array(buf).forEach(b=>bin+=String.fromCharCode(b));return btoa(bin);
+}
+async function decompressStr(b64){
+  const bin=atob(b64);const bytes=Uint8Array.from(bin,c=>c.charCodeAt(0));
+  const ds=new DecompressionStream('deflate-raw');const w=ds.writable.getWriter();w.write(bytes);w.close();
+  return new TextDecoder().decode(await new Response(ds.readable).arrayBuffer());
 }
 
-// ─── EXPORT / IMPORT ─────────────────────────────────────────
-async function doExport(id) {
-  const c = getChar(id);
-  if (!c) return;
-  try {
-    const json = JSON.stringify(c);
-    const compressed = await compressStr(json);
-    const el = $('export-str-box');
-    el.textContent = compressed;
-    // Build QR
-    const qrEl = $('qr-container');
-    qrEl.innerHTML = '';
-    new QRCode(qrEl, {
-      text: compressed,
-      width: 220, height: 220,
-      colorDark: '#c9992a',
-      colorLight: '#13161f',
-      correctLevel: QRCode.CorrectLevel.M
-    });
-    openOverlay('overlay-export');
-  } catch(e) {
-    toast('Export failed: ' + e.message);
-  }
-}
-
-function copyExportString() {
-  const txt = $('export-str-box').textContent;
-  navigator.clipboard.writeText(txt).then(() => toast('📋 Copied to clipboard!')).catch(() => {
-    const ta = document.createElement('textarea');
-    ta.value = txt; document.body.appendChild(ta); ta.select();
-    document.execCommand('copy'); document.body.removeChild(ta);
-    toast('📋 Copied!');
-  });
-}
-
-async function doImport() {
-  const raw = $('import-input').value.trim();
-  $('import-error').style.display = 'none';
-  if (!raw) { showImportError('Paste your export code first'); return; }
-  try {
-    const json = await decompressStr(raw);
-    const c    = JSON.parse(json);
-    if (!c.id || !c.name) throw new Error('Invalid character data');
-    // Check duplicate id
-    if (chars.find(x=>x.id===c.id)) {
-      c.id = uuid(); c.name = c.name + ' (imported)';
-    }
-    chars.push(c);
-    save(); closeOverlay('overlay-import');
-    $('import-input').value = '';
-    goList(); toast(`✦ ${c.name} imported!`);
-  } catch(e) {
-    showImportError('Invalid code — make sure you copied the full export text');
-  }
-}
-function showImportError(msg) {
-  const el = $('import-error');
-  el.textContent = msg; el.style.display = 'block';
-}
-
-// Compression helpers using CompressionStream
-async function compressStr(str) {
-  const encoded = new TextEncoder().encode(str);
-  const cs = new CompressionStream('deflate-raw');
-  const writer = cs.writable.getWriter();
-  writer.write(encoded); writer.close();
-  const buf = await new Response(cs.readable).arrayBuffer();
-  const bytes = new Uint8Array(buf);
-  let bin = '';
-  bytes.forEach(b => bin += String.fromCharCode(b));
-  return btoa(bin);
-}
-async function decompressStr(b64) {
-  const bin  = atob(b64);
-  const bytes = Uint8Array.from(bin, c => c.charCodeAt(0));
-  const ds = new DecompressionStream('deflate-raw');
-  const writer = ds.writable.getWriter();
-  writer.write(bytes); writer.close();
-  const buf = await new Response(ds.readable).arrayBuffer();
-  return new TextDecoder().decode(buf);
-}
-
-// ─── PDF AUTO-FILL ────────────────────────────────────────────
-async function handlePdfUpload(event) {
-  const file = event.target.files[0];
-  if (!file) return;
-  const status = $('pdf-status');
-  status.style.display = 'block';
-  status.innerHTML = '<span class="spinner"></span> Reading PDF with AI…';
-  try {
-    // Convert to base64
-    const base64 = await new Promise((res, rej) => {
-      const r = new FileReader();
-      r.onload = () => res(r.result.split(',')[1]);
-      r.onerror = () => rej(new Error('Failed to read file'));
-      r.readAsDataURL(file);
-    });
-
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 1500,
-        messages: [{
-          role: 'user',
-          content: [
-            { type: 'document', source: { type: 'base64', media_type: 'application/pdf', data: base64 } },
-            { type: 'text', text: `Extract all D&D 5e character sheet fields and return ONLY a valid JSON object (no markdown, no explanation) with these exact keys:
-              name (string), race (string), charClass (string, the class name), subclass (string or ""), level (number 1-20), background (string),
-              maxHp (number), hitDie (string: "d6","d8","d10" or "d12"), ac (number), speed (number),
-              str (number), dex (number), con (number), int (number), wis (number), cha (number),
-              initiativeBonus (number or null if just DEX mod), profBonus (number),
-              skills (object with skill IDs as keys: acrobatics,animalHandle,arcana,athletics,deception,history,insight,intimidation,investigation,medicine,nature,perception,performance,persuasion,religion,sleightHand,stealth,survival — values 0=none 1=proficient 2=expertise),
-              maxSpellSlots (array of 9 numbers for spell levels 1st through 9th, 0 if none)
-              Return ONLY the JSON object.` }
-          ]
-        }]
+// ── PDF ───────────────────────────────────────────────────
+async function handlePdf(event){
+  const file=event.target.files[0];if(!file)return;
+  const st=$('pdf-status');st.style.display='block';st.style.color='var(--gold)';
+  st.innerHTML='<span class="spinner"></span> Reading your character sheet with AI…';
+  try{
+    const base64=await new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result.split(',')[1]);r.onerror=()=>rej(new Error('Read failed'));r.readAsDataURL(file);});
+    const resp=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        model:'claude-sonnet-4-20250514',max_tokens:2000,
+        messages:[{role:'user',content:[
+          {type:'document',source:{type:'base64',media_type:'application/pdf',data:base64}},
+          {type:'text',text:`Read this D&D 5e character sheet and extract ALL available data. Return ONLY a valid JSON object (no markdown, no backticks, no explanation). Keys and types:
+name(str), race(str), charClass(str), subclass(str), level(num 1-20), background(str),
+maxHp(num), hitDie("d6"|"d8"|"d10"|"d12"),
+ac(num), speed(num), profBonus(num), initiativeBonus(num|null),
+str(num),dex(num),con(num),int(num),wis(num),cha(num),
+saveProfs({str:bool,dex:bool,con:bool,int:bool,wis:bool,cha:bool}),
+skills({acrobatics:0|1|2, animalHandle:0|1|2, arcana:0|1|2, athletics:0|1|2, deception:0|1|2, history:0|1|2, insight:0|1|2, intimidation:0|1|2, investigation:0|1|2, medicine:0|1|2, nature:0|1|2, perception:0|1|2, performance:0|1|2, persuasion:0|1|2, religion:0|1|2, sleightHand:0|1|2, stealth:0|1|2, survival:0|1|2}),
+spellAbility("int"|"wis"|"cha"|null),
+maxSpellSlots([9 numbers for levels 1-9]),
+spellAtkOverride(num|null).
+Return ONLY the JSON.`}
+        ]}]
       })
     });
-
-    if (!response.ok) throw new Error('API error ' + response.status);
-    const data = await response.json();
-    const text = (data.content || []).map(i=>i.text||'').join('');
-    const clean = text.replace(/```json|```/g,'').trim();
-    const parsed = JSON.parse(clean);
-    fillCreateForm(parsed, true);
-    status.innerHTML = '✅ PDF imported! Review and save.';
-    status.style.color = 'var(--heal)';
-  } catch(e) {
-    status.innerHTML = '❌ Could not parse PDF. Please fill in manually.';
-    status.style.color = 'var(--ember)';
-    console.error(e);
+    if(!resp.ok){const txt=await resp.text();throw new Error(`API ${resp.status}: ${txt.slice(0,120)}`);}
+    const data=await resp.json();
+    const text=(data.content||[]).map(i=>i.text||'').join('');
+    const clean=text.replace(/```json|```/g,'').trim();
+    fillCreateForm(JSON.parse(clean),true);
+    st.style.color='var(--heal)';st.innerHTML='✅ Sheet imported! Review the fields below and save.';
+  }catch(e){
+    st.style.color='var(--ember)';st.innerHTML=`❌ Could not read PDF: ${e.message}. Use a text-based PDF (not a scan), or fill in manually.`;
+    console.error('PDF import:',e);
   }
-  event.target.value = '';
+  event.target.value='';
 }
 
-// ─── CREATE FORM ──────────────────────────────────────────────
-function buildSkillsForm(existing) {
-  $('skills-form-grid').innerHTML = SKILLS.map(sk => {
-    const state = (existing?.skills || {})[sk.id] || 0;
-    return `<div class="skill-form-item">
-      <div>
-        <div class="skill-form-name">${sk.label}</div>
-        <span class="skill-form-stat">${sk.stat.toUpperCase()}</span>
-      </div>
-      <button class="prof-cycle-btn" data-skill="${sk.id}" data-state="${state}"
-        onclick="cycleProf(this)">${['—','P','E'][state]}</button>
+// ── CREATE FORM ───────────────────────────────────────────
+function buildSaveForm(existing){
+  $('save-form-grid').innerHTML=SAVES.map(s=>{
+    const prof=(existing?.saveProfs||{})[s.stat]||false;
+    return`<div class="save-form-item"><div class="save-form-left"><div class="save-form-name">${s.lbl}</div><span class="save-form-stat">${s.stat.toUpperCase()}</span></div><button class="prof-btn" data-stat="${s.stat}" data-state="${prof?1:0}" onclick="cycleSave(this)">${prof?'P':'—'}</button></div>`;
+  }).join('');
+}
+function cycleSave(btn){const n=parseInt(btn.dataset.state)===0?1:0;btn.dataset.state=n;btn.textContent=n?'P':'—';}
+
+function buildSkillsForm(existing){
+  $('skills-form-list').innerHTML=SKILLS.map(sk=>{
+    const state=(existing?.skills||{})[sk.id]||0;
+    const ov=(existing?.skillOverrides||{})[sk.id];
+    const abilVal=existing?.[sk.stat]||10;
+    const abilM=abilMod(abilVal);
+    const lv=existing?.level||1;
+    const prof=existing?.profBonus||profLvl(lv);
+    const auto=abilM+(state===2?prof*2:state===1?prof:0);
+    const displayVal=ov!=null?ov:auto;
+    return`<div class="skill-form-item">
+      <div class="skill-form-left"><div class="skill-form-name">${sk.lbl}</div><span class="skill-form-stat">${sk.stat.toUpperCase()}</span></div>
+      <button class="prof-btn" data-skill="${sk.id}" data-state="${state}" onclick="cycleSkill(this)" style="margin-right:4px">${['—','P','E'][state]}</button>
+      <input class="sko-input" type="number" id="sko-${sk.id}" value="${displayVal}" inputmode="numeric" title="Override bonus">
     </div>`;
   }).join('');
 }
-
-function cycleProf(btn) {
-  const next = ((parseInt(btn.dataset.state)||0) + 1) % 3;
-  btn.dataset.state = next;
-  btn.textContent = ['—','P','E'][next];
+function cycleSkill(btn){
+  const n=((parseInt(btn.dataset.state)||0)+1)%3;btn.dataset.state=n;btn.textContent=['—','P','E'][n];
+  // Auto-update override based on current form values
+  const skId=btn.dataset.skill,sk=SKILLS.find(s=>s.id===skId);if(!sk)return;
+  const abilVal=parseInt($('f-'+sk.stat)?.value)||10;
+  const abilM=abilMod(abilVal);
+  const lv=parseInt($('f-level')?.value)||1;
+  const profVal=parseInt($('f-prof')?.value)||profLvl(lv);
+  const bonus=abilM+(n===2?profVal*2:n===1?profVal:0);
+  const inp=$('sko-'+skId);if(inp)inp.value=bonus;
 }
 
-function buildSpellInputs(existing) {
-  $('spell-slot-inputs').innerHTML = SPELL_LEVELS.map((name, i) => {
-    const val = existing ? (existing[i]||0) : 0;
-    return `<div class="spell-input-row">
-      <div class="spell-input-lbl">${name}</div>
-      <input class="form-input" id="ss-${i}" type="number" min="0" max="9" value="${val}" inputmode="numeric">
-      <span class="spell-input-note">slots</span>
-    </div>`;
+function buildSpellInputs(existing){
+  $('slot-inputs').innerHTML=SPELL_LEVELS.map((name,i)=>{
+    const val=existing?(existing[i]||0):0;
+    return`<div class="spell-input-row"><div class="spell-input-lbl">${name}</div><input class="form-input" id="ss-${i}" type="number" min="0" max="9" value="${val}" inputmode="numeric"><span style="font-size:.78rem;color:var(--muted)">slots</span></div>`;
   }).join('');
 }
-
-function toggleSpellsForm() {
-  spellsOn = !spellsOn;
-  $('spells-toggle').classList.toggle('on', spellsOn);
-  $('spell-slots-form').style.display = spellsOn ? 'block' : 'none';
-  if (spellsOn && !$('spell-slot-inputs').innerHTML) buildSpellInputs(null);
+function toggleSpells(){
+  spellsOn=!spellsOn;$('spells-toggle').classList.toggle('on',spellsOn);
+  $('spell-slots-form').style.display=spellsOn?'block':'none';
+  if(spellsOn&&!$('slot-inputs').innerHTML)buildSpellInputs(null);
+}
+function fillCreateForm(c,fromPdf=false){
+  const set=(id,v)=>{const el=$(id);if(el)el.value=v??'';};
+  set('f-name',c?.name||'');set('f-race',c?.race||'');set('f-class',c?.charClass||'');
+  set('f-subclass',c?.subclass||'');set('f-level',c?.level||1);set('f-background',c?.background||'');
+  set('f-maxhp',c?.maxHp||'');set('f-hitdie',c?.hitDie||'d8');set('f-ac',c?.ac||'');
+  set('f-speed',c?.speed||30);set('f-prof',c?.profBonus||'');
+  set('f-init',c?.initiativeBonus!=null?c.initiativeBonus:'');
+  set('f-str',c?.str||10);set('f-dex',c?.dex||10);set('f-con',c?.con||10);
+  set('f-int',c?.int||10);set('f-wis',c?.wis||10);set('f-cha',c?.cha||10);
+  buildSaveForm(c);buildSkillsForm(c);
+  const hs=c?.maxSpellSlots&&c.maxSpellSlots.some(s=>s>0);
+  spellsOn=hs||false;$('spells-toggle').classList.toggle('on',spellsOn);
+  $('spell-slots-form').style.display=spellsOn?'block':'none';$('slot-inputs').innerHTML='';
+  if(spellsOn)buildSpellInputs(c?.maxSpellSlots);
+  if(c?.spellAbility)set('f-spell-ability',c.spellAbility);
+  if(c?.spellAtkOverride!=null)set('f-spell-atk',c.spellAtkOverride);
+  $('pdf-status').style.display='none';
 }
 
-function fillCreateForm(c, fromPdf = false) {
-  const set = (id, v) => { const el=$(id); if(el) el.value = v??''; };
-  set('f-name',       c?.name         || '');
-  set('f-race',       c?.race         || '');
-  set('f-class',      c?.charClass    || '');
-  set('f-subclass',   c?.subclass     || '');
-  set('f-level',      c?.level        || 1);
-  set('f-background', c?.background   || '');
-  set('f-maxhp',      c?.maxHp        || '');
-  set('f-hitdie',     c?.hitDie       || 'd8');
-  set('f-ac',         c?.ac           || '');
-  set('f-speed',      c?.speed        || 30);
-  set('f-prof',       c?.profBonus    || '');
-  set('f-initiative', c?.initiativeBonus != null ? c.initiativeBonus : '');
-  set('f-str', c?.str||10); set('f-dex', c?.dex||10); set('f-con', c?.con||10);
-  set('f-int', c?.int||10); set('f-wis', c?.wis||10); set('f-cha', c?.cha||10);
+// ── SAVE CHAR ─────────────────────────────────────────────
+const gv=id=>{const e=$(id);return e?e.value.trim():'';};
+const gn=(id,d)=>{const v=parseInt(gv(id));return isNaN(v)?d:v;};
 
-  buildSkillsForm(c);
-
-  const hasSpells = c?.maxSpellSlots && c.maxSpellSlots.some(s=>s>0);
-  spellsOn = hasSpells;
-  $('spells-toggle').classList.toggle('on', spellsOn);
-  $('spell-slots-form').style.display = spellsOn ? 'block' : 'none';
-  $('spell-slot-inputs').innerHTML = '';
-  if (spellsOn) buildSpellInputs(c.maxSpellSlots);
-
-  $('pdf-status').style.display = 'none';
-}
-
-// ─── SAVE CHARACTER ──────────────────────────────────────────
-function gv(id)   { const el=$(id); return el ? el.value.trim() : ''; }
-function gn(id,d) { const v=parseInt(gv(id)); return isNaN(v)?d:v; }
-
-function saveChar() {
-  const name = gv('f-name');
-  if (!name) { toast('Character name is required!'); return; }
-  const maxHp = gn('f-maxhp',0);
-  if (maxHp<1) { toast('Max HP must be at least 1!'); return; }
-
-  const level = clamp(gn('f-level',1), 1, 20);
-  const existing = editId ? getChar(editId) : null;
-
-  // Collect skill proficiencies
-  const skillMap = {};
-  document.querySelectorAll('#skills-form-grid .prof-cycle-btn').forEach(btn => {
-    const state = parseInt(btn.dataset.state)||0;
-    if (state > 0) skillMap[btn.dataset.skill] = state;
+function saveChar(){
+  const name=gv('f-name');if(!name){toast('Character name is required!');return;}
+  const maxHp=gn('f-maxhp',0);if(maxHp<1){toast('Max HP must be at least 1!');return;}
+  const level=clamp(gn('f-level',1),1,20);
+  const existing=editId?getChar(editId):null;
+  // save profs
+  const saveProfsMap={};document.querySelectorAll('#save-form-grid .prof-btn').forEach(btn=>{if(parseInt(btn.dataset.state)||0)saveProfsMap[btn.dataset.stat]=true;});
+  // skill profs + overrides
+  const skillMap={},skillOv={};
+  document.querySelectorAll('#skills-form-list .prof-btn').forEach(btn=>{const s=parseInt(btn.dataset.state)||0;if(s>0)skillMap[btn.dataset.skill]=s;});
+  SKILLS.forEach(sk=>{
+    const inp=$('sko-'+sk.id);if(!inp)return;
+    const ov=parseInt(inp.value);if(isNaN(ov))return;
+    const abilM=abilMod(parseInt($('f-'+sk.stat)?.value)||10);
+    const prof=gn('f-prof',profLvl(level))||profLvl(level);
+    const state=skillMap[sk.id]||0;
+    const auto=abilM+(state===2?prof*2:state===1?prof:0);
+    if(ov!==auto)skillOv[sk.id]=ov;
   });
-
-  // Spell slots
-  const maxSlots = spellsOn
-    ? SPELL_LEVELS.map((_,i) => clamp(gn(`ss-${i}`,0), 0, 9))
-    : Array(9).fill(0);
-
-  const initiativeRaw = gv('f-initiative');
-  const initiativeBonus = initiativeRaw !== '' ? parseInt(initiativeRaw) : null;
-
-  const c = {
-    id:          existing?.id || uuid(),
-    name, race: gv('f-race'), charClass: gv('f-class'), subclass: gv('f-subclass'),
-    level, background: gv('f-background'),
-    maxHp, currentHp: existing ? Math.min(existing.currentHp, maxHp) : maxHp,
-    tempHp: existing?.tempHp || 0,
-    hitDie: gv('f-hitdie') || 'd8',
-    hitDiceUsed: existing?.hitDiceUsed || 0,
-    ac: gn('f-ac',10), speed: gn('f-speed',30),
-    profBonus: gn('f-prof', profBonus(level)) || profBonus(level),
-    initiativeBonus,
-    str: gn('f-str',10), dex: gn('f-dex',10), con: gn('f-con',10),
-    int: gn('f-int',10), wis: gn('f-wis',10), cha: gn('f-cha',10),
-    skills: skillMap,
-    maxSpellSlots: maxSlots,
-    usedSpellSlots: existing?.usedSpellSlots || Array(9).fill(0),
-    conditions: existing?.conditions || [],
-    deathSaveSuccesses: existing?.deathSaveSuccesses || 0,
-    deathSaveFailures:  existing?.deathSaveFailures  || 0,
-    notes: existing?.notes || '',
-    lastUsed: existing?.lastUsed || Date.now(),
-    createdAt: existing?.createdAt || Date.now(),
+  const maxSlots=spellsOn?SPELL_LEVELS.map((_,i)=>clamp(gn(`ss-${i}`,0),0,9)):Array(9).fill(0);
+  const initRaw=gv('f-init'),spellAtkRaw=gv('f-spell-atk');
+  const c={
+    id:existing?.id||uuid(),name,race:gv('f-race'),charClass:gv('f-class'),subclass:gv('f-subclass'),level,background:gv('f-background'),
+    maxHp,currentHp:existing?Math.min(existing.currentHp,maxHp):maxHp,tempHp:existing?.tempHp||0,
+    hitDie:gv('f-hitdie')||'d8',hitDiceUsed:existing?.hitDiceUsed||0,
+    ac:gn('f-ac',10),speed:gn('f-speed',30),
+    profBonus:gn('f-prof',profLvl(level))||profLvl(level),
+    initiativeBonus:initRaw!==''?parseInt(initRaw):null,
+    str:gn('f-str',10),dex:gn('f-dex',10),con:gn('f-con',10),
+    int:gn('f-int',10),wis:gn('f-wis',10),cha:gn('f-cha',10),
+    saveProfs:saveProfsMap,skills:skillMap,skillOverrides:skillOv,
+    spellAbility:gv('f-spell-ability')||'int',
+    spellAtkOverride:spellAtkRaw!==''?parseInt(spellAtkRaw):null,
+    maxSpellSlots:maxSlots,usedSpellSlots:existing?.usedSpellSlots||Array(9).fill(0),
+    conditions:existing?.conditions||[],
+    deathSaveSuccesses:existing?.deathSaveSuccesses||0,deathSaveFailures:existing?.deathSaveFailures||0,
+    notes:existing?.notes||'',lastUsed:existing?.lastUsed||Date.now(),createdAt:existing?.createdAt||Date.now(),
   };
-
-  if (!existing) chars.push(c);
-  else chars[chars.findIndex(x=>x.id===editId)] = c;
-
-  save();
-  toast(existing ? `✦ ${name} updated!` : `✦ ${name} created!`);
-  if (curId === editId) { curId = c.id; goSheet(c.id); }
-  else goList();
+  if(!existing)chars.push(c);else chars[chars.findIndex(x=>x.id===editId)]=c;
+  save();toast(existing?`✦ ${name} updated!`:`✦ ${name} created!`);
+  if(curId===editId){curId=c.id;goSheet(c.id);}else goList();
 }
 
-// ─── OVERLAYS ────────────────────────────────────────────────
-function openOverlay(id)  { $(id).classList.add('open'); }
-function closeOverlay(id) { $(id).classList.remove('open'); }
-document.querySelectorAll('.overlay').forEach(o => {
-  o.addEventListener('click', e => { if (e.target===o) o.classList.remove('open'); });
-});
+// ── OVERLAYS ──────────────────────────────────────────────
+function openOverlay(id){$(id).classList.add('open');}
+function closeOverlay(id){$(id).classList.remove('open');}
+document.querySelectorAll('.overlay').forEach(o=>o.addEventListener('click',e=>{if(e.target===o)o.classList.remove('open');}));
 
-// ─── TOAST ───────────────────────────────────────────────────
+// ── TOAST ─────────────────────────────────────────────────
 let toastT;
-function toast(msg) {
-  const el = $('toast');
-  el.textContent = msg; el.classList.add('show');
-  clearTimeout(toastT);
-  toastT = setTimeout(() => el.classList.remove('show'), 2400);
-}
+function toast(msg){const el=$('toast');el.textContent=msg;el.classList.add('show');clearTimeout(toastT);toastT=setTimeout(()=>el.classList.remove('show'),2400);}
 
-// ─── INIT ────────────────────────────────────────────────────
-load();
-renderList();
+// ── INIT ──────────────────────────────────────────────────
+loadSettings();load();renderList();
 </script>
 </body>
 </html>
