@@ -255,11 +255,10 @@
 
 <!-- LIST -->
 <div class="screen active" id="screen-list">
-  <div class="list-header"><h1>⚔ DND Character Tracker</h1><p>Your adventurers await</p></div>
+  <div class="list-header"><h1>⚔ DND Character Tracker</h1><p>Your adventurers await</p>    <script type='text/javascript' src='https://storage.ko-fi.com/cdn/widget/Widget_2.js'></script><script type='text/javascript'>kofiwidget2.init('Support me on Ko-fi', '#2f3238', 'N4N01XRFBX');kofiwidget2.draw();</script></div>
   <div class="list-actions">
     <button class="btn btn-gold" onclick="goCreate(null)" style="flex:2">＋ New Character</button>
     <button class="btn btn-ghost btn-sm" onclick="openOverlay('ol-import')">📥 Import</button>
-    <script type='text/javascript' src='https://storage.ko-fi.com/cdn/widget/Widget_2.js'></script><script type='text/javascript'>kofiwidget2.init('Support me on Ko-fi', '#2f3238', 'N4N01XRFBX');kofiwidget2.draw();</script>
   </div>
   <div class="scroll-body" id="char-list"></div>
 </div>
@@ -363,14 +362,6 @@
     <div class="topbar-title" id="create-title">New Character</div>
   </div>
   <div class="scroll-body">
-    <div class="pdf-area" onclick="$('pdf-input').click()">
-      <div style="font-size:1.8rem">📄</div>
-      <div style="font-family:'Cinzel',serif;font-size:.8rem;color:var(--gold);font-weight:700;margin-top:4px">Import from PDF Character Sheet</div>
-      <p>Tap to upload a PDF — AI will auto-fill the form</p>
-    </div>
-    <input type="file" id="pdf-input" accept="application/pdf" onchange="handlePdf(event)">
-    <div id="pdf-status" style="display:none;text-align:center;margin-bottom:12px;font-size:.85rem;padding:10px;border-radius:var(--rsm);border:1px solid var(--border)"></div>
-
     <div class="form-section">⚔ Identity</div>
     <div class="form-group"><label class="form-label">Character Name *</label><input class="form-input" id="f-name" type="text" placeholder="e.g. Thalindra Moonwhisper" maxlength="40"></div>
     <div class="form-row">
