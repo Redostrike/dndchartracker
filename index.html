@@ -201,11 +201,56 @@
     .skill-form-stat{font-family:'Cinzel',serif;font-size:.58rem;color:var(--muted)}
     .sko-input{width:56px;flex-shrink:0;padding:6px 6px;text-align:center;font-family:'Cinzel',serif;font-size:.88rem;background:var(--surface);border:1px solid var(--border);border-radius:var(--rxs);color:var(--text)}
     .sko-input:focus{outline:none;border-color:var(--gold)}
-    /* PDF */
-    .pdf-area{border:1px dashed var(--border);border-radius:var(--rsm);padding:16px;text-align:center;margin-bottom:16px;cursor:pointer;transition:border-color .15s;-webkit-tap-highlight-color:transparent}
-    .pdf-area:hover{border-color:var(--gold)}
-    .pdf-area p{font-size:.82rem;color:var(--muted);font-style:italic;margin-top:5px}
-    #pdf-input{display:none}
+    /* HEROIC INSPIRATION */
+    .insp-card{background:linear-gradient(135deg,#1a1408,#12100a);border:1px solid var(--gold-dim);border-radius:var(--radius);padding:12px 14px;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:border-color .2s}
+    .insp-card.active{border-color:var(--gold);background:linear-gradient(135deg,#201808,#18140a)}
+    .insp-left{display:flex;align-items:center;gap:10px}
+    .insp-icon{font-size:1.6rem;transition:filter .2s}
+    .insp-card.active .insp-icon{filter:drop-shadow(0 0 8px rgba(201,153,42,.7))}
+    .insp-text{font-family:'Cinzel',serif;font-size:.78rem;font-weight:700;color:var(--muted);letter-spacing:.06em;text-transform:uppercase}
+    .insp-card.active .insp-text{color:var(--gold)}
+    .insp-sub{font-size:.72rem;color:var(--muted);font-style:italic;margin-top:1px}
+    .insp-toggle{width:44px;height:44px;border-radius:50%;border:2px solid var(--gold-dim);background:transparent;display:flex;align-items:center;justify-content:center;font-size:1.2rem;transition:all .2s;flex-shrink:0}
+    .insp-card.active .insp-toggle{background:var(--gold);border-color:var(--gold);box-shadow:0 0 16px rgba(201,153,42,.4)}
+
+    /* ITEMS / PERKS */
+    .item-row{display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:1px solid var(--border)}
+    .item-row:last-child{border-bottom:none}
+    .item-check{width:22px;height:22px;border-radius:5px;border:2px solid var(--border);background:transparent;cursor:pointer;flex-shrink:0;margin-top:2px;transition:all .15s;display:flex;align-items:center;justify-content:center;font-size:.8rem;-webkit-tap-highlight-color:transparent}
+    .item-check.on{background:var(--gold);border-color:var(--gold);color:#0c0e16}
+    .item-info{flex:1;min-width:0}
+    .item-name-row{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+    .item-nm{font-family:'Cinzel',serif;font-size:.88rem;font-weight:700;color:var(--text)}
+    .item-nm.inactive{color:var(--muted);text-decoration:line-through}
+    .item-type{font-size:.65rem;padding:2px 7px;border-radius:10px;font-family:'Cinzel',serif;font-weight:700;letter-spacing:.04em}
+    .item-type.t-item{background:rgba(26,74,122,.3);border:1px solid #2060c0;color:#80a0ff}
+    .item-type.t-perk{background:rgba(112,48,192,.2);border:1px solid #7030c0;color:#c080ff}
+    .item-type.t-feat{background:rgba(201,153,42,.12);border:1px solid var(--gold-dim);color:var(--gold)}
+    .item-type.t-feature{background:rgba(42,122,79,.2);border:1px solid #2a6030;color:#5aaa7a}
+    .item-bonus-summary{font-size:.76rem;color:var(--muted);margin-top:3px;font-style:italic}
+    .item-bonus-summary.on{color:#a0b8d8}
+    .item-acts{display:flex;align-items:center;gap:4px;flex-shrink:0}
+    .item-btn{background:transparent;border:none;cursor:pointer;color:var(--muted);font-size:.85rem;padding:4px;-webkit-tap-highlight-color:transparent;transition:color .15s}
+    .item-btn:hover{color:var(--text)}
+    .item-desc-wrap{overflow:hidden;max-height:0;transition:max-height .3s ease}
+    .item-desc-wrap.open{max-height:300px}
+    .item-desc-text{font-size:.85rem;color:var(--muted);font-style:italic;padding:8px 6px 4px;line-height:1.6;white-space:pre-wrap}
+
+    /* ITEM MODAL SECTIONS */
+    .item-modal-sec{margin-bottom:10px;border:1px solid var(--border);border-radius:var(--rsm);overflow:hidden}
+    .item-sec-head{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;cursor:pointer;background:var(--card);-webkit-tap-highlight-color:transparent}
+    .item-sec-title{font-family:'Cinzel',serif;font-size:.7rem;font-weight:700;color:var(--muted);letter-spacing:.08em;text-transform:uppercase}
+    .item-sec-chev{color:var(--muted);transition:transform .2s;font-size:.8rem}
+    .item-sec-chev.open{transform:rotate(90deg)}
+    .item-sec-body{max-height:0;overflow:hidden;transition:max-height .3s ease;background:var(--surface)}
+    .item-sec-body.open{max-height:600px}
+    .item-sec-inner{padding:10px 12px}
+    .bonus-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:4px}
+    .bonus-field{display:flex;flex-direction:column;gap:3px}
+    .bonus-field label{font-family:'Cinzel',serif;font-size:.6rem;color:var(--muted);letter-spacing:.06em;text-transform:uppercase}
+    .bonus-input{width:100%;padding:7px 6px;text-align:center;background:var(--card);border:1px solid var(--border);border-radius:var(--rxs);color:var(--text);font-family:'Cinzel',serif;font-size:.9rem}
+    .bonus-input:focus{outline:none;border-color:var(--gold)}
+    .bonus-grid2{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
 
     /* OVERLAYS */
     .overlay{position:fixed;inset:0;background:rgba(0,0,0,.76);backdrop-filter:blur(3px);display:flex;align-items:flex-end;justify-content:center;z-index:100;opacity:0;pointer-events:none;transition:opacity .2s}
@@ -309,6 +354,18 @@
       <div class="cond-accordion" id="cond-acc"><div class="conds-grid" id="conds-grid"></div></div>
     </div>
 
+    <!-- HEROIC INSPIRATION -->
+    <div class="insp-card" id="insp-card" onclick="toggleInspiration()">
+      <div class="insp-left">
+        <span class="insp-icon" id="insp-icon">✨</span>
+        <div>
+          <div class="insp-text" id="insp-text">Heroic Inspiration</div>
+          <div class="insp-sub" id="insp-sub">Tap to use</div>
+        </div>
+      </div>
+      <div class="insp-toggle" id="insp-toggle">✦</div>
+    </div>
+
     <!-- DEATH SAVES -->
     <div class="death-card" id="death-card" style="display:none">
       <div class="death-title">☠ Death Saving Throws</div>
@@ -344,6 +401,13 @@
       <div id="spell-ui"></div>
     </div>
 
+    <!-- ITEMS & PERKS -->
+    <div class="card" id="items-card">
+      <div class="card-title">Items &amp; Perks</div>
+      <div id="items-list"><div style="font-size:.82rem;color:var(--muted);font-style:italic;padding:4px 0">No items or perks yet.</div></div>
+      <button class="btn btn-ghost btn-sm" onclick="openAddItem()" style="width:100%;margin-top:10px">＋ Add Item / Perk / Feat</button>
+    </div>
+
     <!-- NOTES -->
     <div class="card"><div class="card-title">Notes</div>
       <textarea id="notes-area" class="form-input" style="min-height:80px;resize:vertical;font-family:'Crimson Pro',serif;font-size:.95rem" placeholder="Inventory, spells, reminders…" oninput="saveNotes()"></textarea>
@@ -362,14 +426,6 @@
     <div class="topbar-title" id="create-title">New Character</div>
   </div>
   <div class="scroll-body">
-    <div class="pdf-area" onclick="$('pdf-input').click()">
-      <div style="font-size:1.8rem">📄</div>
-      <div style="font-family:'Cinzel',serif;font-size:.8rem;color:var(--gold);font-weight:700;margin-top:4px">Import from PDF Character Sheet</div>
-      <p>Tap to upload a PDF — AI will auto-fill the form</p>
-    </div>
-    <input type="file" id="pdf-input" accept="application/pdf" onchange="handlePdf(event)">
-    <div id="pdf-status" style="display:none;text-align:center;margin-bottom:12px;font-size:.85rem;padding:10px;border-radius:var(--rsm);border:1px solid var(--border)"></div>
-
     <div class="form-section">⚔ Identity</div>
     <div class="form-group"><label class="form-label">Character Name *</label><input class="form-input" id="f-name" type="text" placeholder="e.g. Thalindra Moonwhisper" maxlength="40"></div>
     <div class="form-row">
@@ -556,22 +612,116 @@
   </div>
 </div>
 
-<!-- Settings -->
-<div class="overlay" id="ol-settings">
+<!-- Settings (removed - skills always sorted by stat) -->
+
+<!-- Add / Edit Item -->
+<div class="overlay" id="ol-item">
   <div class="modal">
-    <div class="modal-title">⚙ Settings</div>
-    <div style="font-family:'Cinzel',serif;font-size:.7rem;font-weight:700;color:var(--gold);letter-spacing:.08em;text-transform:uppercase;margin-bottom:10px">Skill Sort Order</div>
-    <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:18px">
-      <label style="display:flex;align-items:center;gap:10px;padding:11px 13px;background:var(--card);border:1px solid var(--border);border-radius:var(--rsm);cursor:pointer">
-        <input type="radio" name="skillsort" value="az" style="accent-color:var(--gold)"> <span style="font-size:.9rem">A – Z</span>
-      </label>
-      <label style="display:flex;align-items:center;gap:10px;padding:11px 13px;background:var(--card);border:1px solid var(--border);border-radius:var(--rsm);cursor:pointer">
-        <input type="radio" name="skillsort" value="stat" style="accent-color:var(--gold)"> <span style="font-size:.9rem">By Ability Score <span style="color:var(--muted);font-size:.78rem">(STR → DEX → CON → INT → WIS → CHA)</span></span>
-      </label>
+    <div class="modal-title" id="item-modal-title">＋ Add Item / Perk</div>
+
+    <div class="form-group">
+      <label class="form-label">Name *</label>
+      <input class="form-input" id="item-name" type="text" placeholder="e.g. Ring of Protection, Alert Feat…" maxlength="60">
     </div>
+    <div class="form-group">
+      <label class="form-label">Type</label>
+      <select class="form-input form-select" id="item-type">
+        <option value="item">🗡 Item / Equipment</option>
+        <option value="perk">⭐ Perk / Racial Trait</option>
+        <option value="feat">🎯 Feat</option>
+        <option value="feature">🌟 Class Feature</option>
+      </select>
+    </div>
+
+    <!-- Combat Bonuses -->
+    <div class="item-modal-sec">
+      <div class="item-sec-head" onclick="toggleItemSec(this)">
+        <span class="item-sec-title">🛡 Combat Bonuses</span>
+        <span class="item-sec-chev">›</span>
+      </div>
+      <div class="item-sec-body">
+        <div class="item-sec-inner">
+          <div class="bonus-grid">
+            <div class="bonus-field"><label>AC</label><input class="bonus-input" type="number" id="ib-ac" placeholder="0" inputmode="numeric"></div>
+            <div class="bonus-field"><label>Max HP</label><input class="bonus-input" type="number" id="ib-maxHp" placeholder="0" inputmode="numeric"></div>
+            <div class="bonus-field"><label>Speed (ft)</label><input class="bonus-input" type="number" id="ib-speed" placeholder="0" inputmode="numeric"></div>
+          </div>
+          <div class="bonus-grid">
+            <div class="bonus-field"><label>Initiative</label><input class="bonus-input" type="number" id="ib-initiative" placeholder="0" inputmode="numeric"></div>
+            <div class="bonus-field"><label>Prof Bonus</label><input class="bonus-input" type="number" id="ib-profBonus" placeholder="0" inputmode="numeric"></div>
+            <div class="bonus-field"><label>Spell Atk</label><input class="bonus-input" type="number" id="ib-spellAtk" placeholder="0" inputmode="numeric"></div>
+          </div>
+          <div class="bonus-grid2">
+            <div class="bonus-field"><label>Spell DC</label><input class="bonus-input" type="number" id="ib-spellDc" placeholder="0" inputmode="numeric"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Ability Score Bonuses -->
+    <div class="item-modal-sec">
+      <div class="item-sec-head" onclick="toggleItemSec(this)">
+        <span class="item-sec-title">🎲 Ability Score Bonuses</span>
+        <span class="item-sec-chev">›</span>
+      </div>
+      <div class="item-sec-body">
+        <div class="item-sec-inner">
+          <div class="bonus-grid">
+            <div class="bonus-field"><label>STR</label><input class="bonus-input" type="number" id="ib-str" placeholder="0" inputmode="numeric"></div>
+            <div class="bonus-field"><label>DEX</label><input class="bonus-input" type="number" id="ib-dex" placeholder="0" inputmode="numeric"></div>
+            <div class="bonus-field"><label>CON</label><input class="bonus-input" type="number" id="ib-con" placeholder="0" inputmode="numeric"></div>
+          </div>
+          <div class="bonus-grid">
+            <div class="bonus-field"><label>INT</label><input class="bonus-input" type="number" id="ib-int" placeholder="0" inputmode="numeric"></div>
+            <div class="bonus-field"><label>WIS</label><input class="bonus-input" type="number" id="ib-wis" placeholder="0" inputmode="numeric"></div>
+            <div class="bonus-field"><label>CHA</label><input class="bonus-input" type="number" id="ib-cha" placeholder="0" inputmode="numeric"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Skill Bonuses -->
+    <div class="item-modal-sec">
+      <div class="item-sec-head" onclick="toggleItemSec(this)">
+        <span class="item-sec-title">🎯 Skill Bonuses</span>
+        <span class="item-sec-chev">›</span>
+      </div>
+      <div class="item-sec-body">
+        <div class="item-sec-inner" id="item-skill-inputs"></div>
+      </div>
+    </div>
+
+    <!-- Saving Throw Bonuses -->
+    <div class="item-modal-sec">
+      <div class="item-sec-head" onclick="toggleItemSec(this)">
+        <span class="item-sec-title">🎯 Saving Throw Bonuses</span>
+        <span class="item-sec-chev">›</span>
+      </div>
+      <div class="item-sec-body">
+        <div class="item-sec-inner">
+          <div class="bonus-grid">
+            <div class="bonus-field"><label>STR</label><input class="bonus-input" type="number" id="isb-str" placeholder="0" inputmode="numeric"></div>
+            <div class="bonus-field"><label>DEX</label><input class="bonus-input" type="number" id="isb-dex" placeholder="0" inputmode="numeric"></div>
+            <div class="bonus-field"><label>CON</label><input class="bonus-input" type="number" id="isb-con" placeholder="0" inputmode="numeric"></div>
+          </div>
+          <div class="bonus-grid">
+            <div class="bonus-field"><label>INT</label><input class="bonus-input" type="number" id="isb-int" placeholder="0" inputmode="numeric"></div>
+            <div class="bonus-field"><label>WIS</label><input class="bonus-input" type="number" id="isb-wis" placeholder="0" inputmode="numeric"></div>
+            <div class="bonus-field"><label>CHA</label><input class="bonus-input" type="number" id="isb-cha" placeholder="0" inputmode="numeric"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Description -->
+    <div class="form-group" style="margin-top:10px">
+      <label class="form-label">Description (optional)</label>
+      <textarea class="form-input" id="item-desc" placeholder="Describe the item, its requirements, flavour text…" style="min-height:70px;resize:vertical;font-family:'Crimson Pro',serif;font-size:.95rem"></textarea>
+    </div>
+
     <div class="modal-actions">
-      <button class="btn btn-ghost" onclick="closeOverlay('ol-settings')">Close</button>
-      <button class="btn btn-gold" onclick="saveSettings()">Save</button>
+      <button class="btn btn-ghost" onclick="cancelItem()">Cancel</button>
+      <button class="btn btn-gold" onclick="saveItem()">Save</button>
     </div>
   </div>
 </div>
@@ -629,7 +779,7 @@ const SPELL_LEVELS=['1st','2nd','3rd','4th','5th','6th','7th','8th','9th'];
 // ── STATE ─────────────────────────────────────────────────
 let chars=[], curId=null, editId=null, deleteId=null, spellsOn=false, condOpen=false;
 let srSpends=new Set();
-let settings={skillSort:'az'};
+let editingItemId=null;
 
 // ── UTILS ─────────────────────────────────────────────────
 const $=id=>document.getElementById(id);
@@ -641,6 +791,36 @@ const clamp=(v,a,b)=>Math.min(b,Math.max(a,v));
 const profLvl=l=>{if(l<5)return 2;if(l<9)return 3;if(l<13)return 4;if(l<17)return 5;return 6;};
 const getChar=id=>chars.find(c=>c.id===id);
 
+// ── EFFECTIVE STATS (base + active item bonuses) ──────────
+function getItemBonuses(c){
+  const b={ac:0,maxHp:0,speed:0,initiative:0,profBonus:0,str:0,dex:0,con:0,int:0,wis:0,cha:0,spellAtk:0,spellDc:0,skills:{},saves:{}};
+  (c.items||[]).forEach(item=>{
+    if(!item.active||!item.bonuses)return;
+    const bn=item.bonuses;
+    ['ac','maxHp','speed','initiative','profBonus','str','dex','con','int','wis','cha','spellAtk','spellDc'].forEach(k=>{
+      if(bn[k])b[k]+=(bn[k]||0);
+    });
+    if(bn.skills)Object.keys(bn.skills).forEach(sk=>{b.skills[sk]=(b.skills[sk]||0)+(bn.skills[sk]||0);});
+    if(bn.saves)Object.keys(bn.saves).forEach(sv=>{b.saves[sv]=(b.saves[sv]||0)+(bn.saves[sv]||0);});
+  });
+  return b;
+}
+function getEffective(c){
+  const b=getItemBonuses(c);
+  const prof=(c.profBonus||profLvl(c.level||1))+b.profBonus;
+  const dexEff=(c.dex||10)+b.dex;
+  const initBase=c.initiativeBonus!=null&&c.initiativeBonus!==''?parseInt(c.initiativeBonus):abilMod(dexEff);
+  return{
+    str:(c.str||10)+b.str, dex:dexEff, con:(c.con||10)+b.con,
+    int:(c.int||10)+b.int, wis:(c.wis||10)+b.wis, cha:(c.cha||10)+b.cha,
+    ac:(c.ac||10)+b.ac, maxHp:(c.maxHp||1)+b.maxHp,
+    speed:(c.speed||30)+b.speed, prof,
+    initiative:initBase+b.initiative,
+    spellAtkExtra:b.spellAtk, spellDcExtra:b.spellDc,
+    skillExtra:b.skills, saveExtra:b.saves,
+  };
+}
+
 // ── PERSIST ───────────────────────────────────────────────
 function save(){localStorage.setItem('dnd_v3',JSON.stringify(chars));}
 function load(){
@@ -648,19 +828,6 @@ function load(){
   if(r){chars=JSON.parse(r);return;}
   const old=localStorage.getItem('dnd_chars_v2');
   chars=old?JSON.parse(old):[];
-}
-function loadSettings(){const r=localStorage.getItem('dnd_settings');if(r)try{settings={...settings,...JSON.parse(r)};}catch(e){}}
-function saveSettings(){
-  const ch=document.querySelector('input[name="skillsort"]:checked');
-  if(ch)settings.skillSort=ch.value;
-  localStorage.setItem('dnd_settings',JSON.stringify(settings));
-  closeOverlay('ol-settings');
-  if(curId)renderSkills();
-  toast('Settings saved');
-}
-function openSettingsModal(){
-  document.querySelectorAll('input[name="skillsort"]').forEach(r=>r.checked=r.value===settings.skillSort);
-  openOverlay('ol-settings');
 }
 
 // ── SCREENS ───────────────────────────────────────────────
@@ -691,16 +858,32 @@ function renderSheet(){
   const c=getChar(curId);if(!c)return;
   $('sh-name').textContent=c.name;
   $('sh-meta').textContent=[c.race,c.charClass,c.subclass?`(${c.subclass})`:'',c.level?`Lv ${c.level}`:''].filter(Boolean).join(' · ');
-  renderHp();renderStats();renderCombat();renderSpells();renderConds();renderDS();renderSkills();renderSaves();
+  renderHp();renderInspiration();renderStats();renderCombat();renderSpells();renderConds();renderDS();renderSkills();renderSaves();renderItems();
   $('notes-area').value=c.notes||'';
   $('cond-acc').classList.remove('open');$('cond-btn').classList.remove('open');condOpen=false;
 }
 
+// ── HEROIC INSPIRATION ────────────────────────────────────
+function renderInspiration(){
+  const c=getChar(curId);const on=c.heroicInspiration||false;
+  $('insp-card').classList.toggle('active',on);
+  $('insp-icon').textContent=on?'🌟':'✨';
+  $('insp-text').textContent=on?'Heroic Inspiration':'Heroic Inspiration';
+  $('insp-sub').textContent=on?'Active — tap to use':'Tap to gain';
+  $('insp-toggle').textContent=on?'★':'✦';
+}
+function toggleInspiration(){
+  const c=getChar(curId);c.heroicInspiration=!c.heroicInspiration;
+  save();renderInspiration();
+  toast(c.heroicInspiration?'🌟 Heroic Inspiration gained!':'✨ Heroic Inspiration used');
+}
+
 function renderHp(){
   const c=getChar(curId);
-  const {currentHp:cur,maxHp:max}=c;
+  const eff=getEffective(c);
+  const cur=c.currentHp,max=eff.maxHp;
   const pct=clamp((cur/max)*100,0,100);
-  $('hp-cur').textContent=cur; $('hp-maxn').textContent=max; $('temp-val').textContent=c.tempHp||0; $('ac-num').textContent=c.ac||'?';
+  $('hp-cur').textContent=cur; $('hp-maxn').textContent=max; $('temp-val').textContent=c.tempHp||0; $('ac-num').textContent=eff.ac;
   const bar=$('hp-bar'),curEl=$('hp-cur'),badge=$('hp-badge');
   curEl.className='hp-cur'; bar.className='hp-bar-fill'; bar.style.width=pct+'%';
   if(cur<=0){badge.textContent='💀 Unconscious';badge.style.cssText='background:rgba(139,26,26,.3);border-color:#8b1a1a;color:#ff8080';$('death-card').style.display='block';}
@@ -720,8 +903,10 @@ function doDamage(){
 }
 function doHeal(){
   const val=parseInt($('heal-in').value);if(!val||val<1){toast('Enter a heal amount');return;}
-  const c=getChar(curId);const before=c.currentHp;
-  c.currentHp=Math.min(c.maxHp,c.currentHp+val);const actual=c.currentHp-before;
+  const c=getChar(curId);
+  const eff=getEffective(c);
+  const before=c.currentHp;
+  c.currentHp=Math.min(eff.maxHp,c.currentHp+val);const actual=c.currentHp-before;
   if(before<=0&&c.currentHp>0){c.deathSaveSuccesses=0;c.deathSaveFailures=0;c.conditions=(c.conditions||[]).filter(x=>x!=='unconscious');renderDS();}
   $('heal-in').value='';save();renderHp();renderConds();toast(`✦ Healed ${actual} HP`);
 }
@@ -731,31 +916,32 @@ function adjTHP(d){const i=$('thp-input');i.value=Math.max(0,(parseInt(i.value)|
 function applyTHP(){const c=getChar(curId);c.tempHp=Math.max(0,parseInt($('thp-input').value)||0);save();renderHp();closeOverlay('ol-temphp');toast(`🛡 Temp HP set to ${c.tempHp}`);}
 
 function renderStats(){
-  const c=getChar(curId);
+  const c=getChar(curId);const eff=getEffective(c);
   $('stats-grid').innerHTML=[['str','STR'],['dex','DEX'],['con','CON'],['int','INT'],['wis','WIS'],['cha','CHA']].map(([k,l])=>{
-    const v=c[k]||10,m=abilMod(v);
-    return `<div class="stat-box"><div class="stat-name">${l}</div><div class="stat-score">${v}</div><div class="stat-mod ${m>0?'pos':m<0?'neg':''}">${fmod(m)}</div></div>`;
+    const v=eff[k],m=abilMod(v);
+    const bonus=v-(c[k]||10);
+    const bonusTxt=bonus!==0?`<span style="font-size:.62rem;color:${bonus>0?'#5aaa7a':'#e06040'}">(${bonus>0?'+':''}${bonus})</span>`:'';
+    return `<div class="stat-box"><div class="stat-name">${l}</div><div class="stat-score">${v} ${bonusTxt}</div><div class="stat-mod ${m>0?'pos':m<0?'neg':''}">${fmod(m)}</div></div>`;
   }).join('');
 }
 function renderCombat(){
-  const c=getChar(curId);
-  const prof=c.profBonus||profLvl(c.level||1);
-  const init=c.initiativeBonus!=null&&c.initiativeBonus!==''?parseInt(c.initiativeBonus):abilMod(c.dex||10);
+  const c=getChar(curId);const eff=getEffective(c);
   const hdLeft=Math.max(0,(c.level||1)-(c.hitDiceUsed||0));
   $('combat-row').innerHTML=[
-    {v:(c.speed||30)+'ft',l:'Speed'},{v:fmod(init),l:'Initiative'},{v:'+'+prof,l:'Prof Bonus'},{v:`${hdLeft}/${c.level||1} ${c.hitDie||'d8'}`,l:'Hit Dice Left'},
+    {v:(eff.speed)+'ft',l:'Speed'},{v:fmod(eff.initiative),l:'Initiative'},
+    {v:'+'+eff.prof,l:'Prof Bonus'},{v:`${hdLeft}/${c.level||1} ${c.hitDie||'d8'}`,l:'Hit Dice Left'},
   ].map(i=>`<div class="cstat"><div class="cstat-val">${i.v}</div><div class="cstat-label">${i.l}</div></div>`).join('');
 }
 function renderSpells(){
   const c=getChar(curId);
   const hasSlots=c.maxSpellSlots&&c.maxSpellSlots.some(s=>s>0);
   $('spell-card').style.display=hasSlots?'block':'none';if(!hasSlots)return;
-  const prof=c.profBonus||profLvl(c.level||1);
+  const eff=getEffective(c);
   const abilKey=c.spellAbility||'int';
-  const abilM=abilMod(c[abilKey]||10);
-  const atk=c.spellAtkOverride!=null&&c.spellAtkOverride!==''?parseInt(c.spellAtkOverride):(abilM+prof);
-  const dc=8+prof+abilM;
-  $('spell-meta').innerHTML=`<div class="spell-meta-box"><div class="spell-meta-val">${fmod(atk)}</div><div class="spell-meta-label">Spell Attack</div></div><div class="spell-meta-box"><div class="spell-meta-val">${dc}</div><div class="spell-meta-label">Spell Save DC</div></div>`;
+  const abilM=abilMod(eff[abilKey]);
+  const atk=c.spellAtkOverride!=null&&c.spellAtkOverride!==''?parseInt(c.spellAtkOverride):(abilM+eff.prof);
+  const dc=8+eff.prof+abilM;
+  $('spell-meta').innerHTML=`<div class="spell-meta-box"><div class="spell-meta-val">${fmod(atk+eff.spellAtkExtra)}</div><div class="spell-meta-label">Spell Attack</div></div><div class="spell-meta-box"><div class="spell-meta-val">${dc+eff.spellDcExtra}</div><div class="spell-meta-label">Spell Save DC</div></div>`;
   $('spell-ui').innerHTML=c.maxSpellSlots.map((max,i)=>{
     if(!max)return'';
     const used=(c.usedSpellSlots||[])[i]||0;
@@ -805,41 +991,162 @@ function stabilize(){
 
 function renderSkills(){
   const c=getChar(curId);
-  const prof=c.profBonus||profLvl(c.level||1);
-  const sp=c.skills||{},so=c.skillOverrides||{};
-  let html='';
-  if(settings.skillSort==='stat'){
-    const groups={};STAT_ORDER.forEach(s=>groups[s]=[]);SKILLS.forEach(sk=>groups[sk.stat].push(sk));
-    html=STAT_ORDER.map(stat=>{
-      if(!groups[stat].length)return'';
-      return`<div class="skill-grp-header">${STAT_LABELS[stat]}</div>`+groups[stat].map(sk=>skRow(sk,c,prof,sp,so)).join('');
-    }).join('');
-  }else{
-    html=[...SKILLS].sort((a,b)=>a.lbl.localeCompare(b.lbl)).map(sk=>skRow(sk,c,prof,sp,so)).join('');
-  }
+  const eff=getEffective(c);
+  const prof=eff.prof;
+  const sp=c.skills||{},so=c.skillOverrides||{},se=eff.skillExtra||{};
+  const groups={};STAT_ORDER.forEach(s=>groups[s]=[]);SKILLS.forEach(sk=>groups[sk.stat].push(sk));
+  let html=STAT_ORDER.map(stat=>{
+    if(!groups[stat].length)return'';
+    const statMod=abilMod(eff[stat]);
+    const hdr=`<div class="skill-grp-header"><span>${STAT_LABELS[stat]}</span><span style="margin-left:6px;color:${statMod>=0?'#5aaa7a':'#e06040'}">${fmod(statMod)}</span></div>`;
+    return hdr+groups[stat].map(sk=>skRow(sk,c,prof,sp,so,se,eff)).join('');
+  }).join('');
   $('skills-list').innerHTML=html;
-  const percProf=sp['perception']||0,percOver=so['perception'];
-  const percBonus=percOver!=null?percOver:(abilMod(c.wis||10)+(percProf===2?prof*2:percProf===1?prof:0));
+  const percProf=sp['perception']||0,percOver=so['perception'],percExtra=se['perception']||0;
+  const percBonus=percOver!=null?(percOver+percExtra):(abilMod(eff.wis)+(percProf===2?prof*2:percProf===1?prof:0)+percExtra);
   $('passive-perc').textContent=10+percBonus;
 }
-function skRow(sk,c,prof,sp,so){
-  const base=abilMod(c[sk.stat]||10),lv=sp[sk.id]||0,ov=so[sk.id];
-  const bonus=ov!=null?ov:(base+(lv===2?prof*2:lv===1?prof:0));
+function skRow(sk,c,prof,sp,so,se,eff){
+  const base=abilMod(eff[sk.stat]),lv=sp[sk.id]||0,ov=so[sk.id],extra=se[sk.id]||0;
+  const bonus=ov!=null?(ov+extra):(base+(lv===2?prof*2:lv===1?prof:0)+extra);
   const ico=lv===2?'★':lv===1?'◉':'○';
   const ic=lv===2?'var(--gold)':lv===1?'#80a0ff':'var(--border)';
   const bc=bonus>0?'pos':bonus<0?'neg':'z';
-  return`<div class="skill-row"><div class="skill-left"><span class="skill-icon" style="color:${ic}">${ico}</span><span class="skill-nm">${sk.lbl}</span><span class="skill-stag">${sk.stat.toUpperCase()}</span></div><span class="skill-bonus ${bc}">${fmod(bonus)}</span></div>`;
+  const extraTxt=extra!==0?`<span style="font-size:.6rem;color:${extra>0?'#5aaa7a':'#e06040'};margin-left:2px">(${extra>0?'+':''}${extra})</span>`:'';
+  return`<div class="skill-row"><div class="skill-left"><span class="skill-icon" style="color:${ic}">${ico}</span><span class="skill-nm">${sk.lbl}</span><span class="skill-stag">${sk.stat.toUpperCase()}</span></div><span class="skill-bonus ${bc}">${fmod(bonus)}${extraTxt}</span></div>`;
 }
 function renderSaves(){
-  const c=getChar(curId);const prof=c.profBonus||profLvl(c.level||1);
-  const sp=c.saveProfs||{},so=c.saveOverrides||{};
+  const c=getChar(curId);const eff=getEffective(c);const prof=eff.prof;
+  const sp=c.saveProfs||{},so=c.saveOverrides||{},se=eff.saveExtra||{};
   $('saves-list').innerHTML=SAVES.map(s=>{
-    const base=abilMod(c[s.stat]||10),hasp=sp[s.stat]||false,ov=so[s.stat];
-    const bonus=ov!=null?ov:(base+(hasp?prof:0));
+    const base=abilMod(eff[s.stat]),hasp=sp[s.stat]||false,ov=so[s.stat],extra=se[s.stat]||0;
+    const bonus=ov!=null?(ov+extra):(base+(hasp?prof:0)+extra);
     const ico=hasp?'◉':'○',ic=hasp?'#80a0ff':'var(--border)';
     const bc=bonus>0?'pos':bonus<0?'neg':'z';
-    return`<div class="skill-row"><div class="skill-left"><span class="skill-icon" style="color:${ic}">${ico}</span><span class="skill-nm">${s.lbl}</span><span class="skill-stag">${s.stat.toUpperCase()}</span></div><span class="skill-bonus ${bc}">${fmod(bonus)}</span></div>`;
+    const extraTxt=extra!==0?`<span style="font-size:.6rem;color:${extra>0?'#5aaa7a':'#e06040'};margin-left:2px">(${extra>0?'+':''}${extra})</span>`:'';
+    return`<div class="skill-row"><div class="skill-left"><span class="skill-icon" style="color:${ic}">${ico}</span><span class="skill-nm">${s.lbl}</span><span class="skill-stag">${s.stat.toUpperCase()}</span></div><span class="skill-bonus ${bc}">${fmod(bonus)}${extraTxt}</span></div>`;
   }).join('');
+}
+
+// ── ITEMS / PERKS ─────────────────────────────────────────
+const TYPE_INFO={item:{lbl:'Item',cls:'t-item'},perk:{lbl:'Perk',cls:'t-perk'},feat:{lbl:'Feat',cls:'t-feat'},feature:{lbl:'Feature',cls:'t-feature'}};
+
+function bonusSummaryText(bonuses){
+  if(!bonuses)return'';
+  const parts=[];
+  const labels={ac:'AC',maxHp:'Max HP',speed:'Speed',initiative:'Initiative',profBonus:'Prof',str:'STR',dex:'DEX',con:'CON',int:'INT',wis:'WIS',cha:'CHA',spellAtk:'Spell Atk',spellDc:'Spell DC'};
+  Object.keys(labels).forEach(k=>{if(bonuses[k]&&bonuses[k]!==0)parts.push(`${bonuses[k]>0?'+':''}${bonuses[k]} ${labels[k]}`);});
+  if(bonuses.skills)Object.keys(bonuses.skills).forEach(k=>{const sk=SKILLS.find(s=>s.id===k);if(sk&&bonuses.skills[k])parts.push(`${bonuses.skills[k]>0?'+':''}${bonuses.skills[k]} ${sk.lbl}`);});
+  if(bonuses.saves)Object.keys(bonuses.saves).forEach(k=>{if(bonuses.saves[k])parts.push(`${bonuses.saves[k]>0?'+':''}${bonuses.saves[k]} ${k.toUpperCase()} save`);});
+  return parts.join(' · ');
+}
+
+function renderItems(){
+  const c=getChar(curId);const items=c.items||[];
+  const el=$('items-list');
+  if(!items.length){el.innerHTML='<div style="font-size:.82rem;color:var(--muted);font-style:italic;padding:4px 0">No items or perks yet.</div>';return;}
+  el.innerHTML=items.map((item,idx)=>{
+    const ti=TYPE_INFO[item.type]||TYPE_INFO.item;
+    const summary=bonusSummaryText(item.bonuses);
+    const hasDesc=!!(item.description&&item.description.trim());
+    return`<div class="item-row">
+      <div class="item-check ${item.active?'on':''}" onclick="toggleItemActive('${item.id}')" title="${item.active?'Active — tap to disable':'Inactive — tap to enable'}">${item.active?'✓':''}</div>
+      <div class="item-info">
+        <div class="item-name-row">
+          <span class="item-nm ${item.active?'':'inactive'}">${esc(item.name)}</span>
+          <span class="item-type ${ti.cls}">${ti.lbl}</span>
+        </div>
+        ${summary?`<div class="item-bonus-summary ${item.active?'on':''}">${summary}</div>`:''}
+        ${hasDesc?`<div class="item-desc-wrap" id="idesc-${item.id}"><div class="item-desc-text">${esc(item.description)}</div></div>`:''}
+        ${hasDesc?`<button class="item-btn" onclick="toggleItemDesc('${item.id}')" style="font-size:.7rem;color:var(--gold);padding:2px 0;font-family:'Cinzel',serif;letter-spacing:.04em">› Description</button>`:''}
+      </div>
+      <div class="item-acts">
+        <button class="item-btn" onclick="openEditItem('${item.id}')" title="Edit">✏️</button>
+        <button class="item-btn" onclick="removeItem('${item.id}')" title="Remove" style="color:var(--ember)">✕</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function toggleItemDesc(id){
+  const el=$('idesc-'+id);if(!el)return;
+  el.classList.toggle('open');
+}
+function toggleItemActive(id){
+  const c=getChar(curId);const item=(c.items||[]).find(x=>x.id===id);if(!item)return;
+  item.active=!item.active;
+  save();renderSheet();
+  toast(item.active?`✦ ${item.name} activated`:`${item.name} deactivated`);
+}
+function removeItem(id){
+  const c=getChar(curId);c.items=(c.items||[]).filter(x=>x.id!==id);
+  save();renderSheet();toast('Item removed');
+}
+
+function buildItemSkillInputs(existing){
+  const bonuses=existing?.skills||{};
+  $('item-skill-inputs').innerHTML=`<div class="bonus-grid">${SKILLS.map(sk=>`<div class="bonus-field"><label>${sk.lbl.slice(0,12)}</label><input class="bonus-input" type="number" id="iskb-${sk.id}" value="${bonuses[sk.id]||''}" placeholder="0" inputmode="numeric"></div>`).join('')}</div>`;
+}
+
+function toggleItemSec(head){
+  const body=head.nextElementSibling;const chev=head.querySelector('.item-sec-chev');
+  const open=body.classList.toggle('open');chev.classList.toggle('open',open);
+}
+
+function openAddItem(){
+  editingItemId=null;
+  $('item-modal-title').textContent='＋ Add Item / Perk';
+  // clear fields
+  $('item-name').value='';$('item-type').value='item';$('item-desc').value='';
+  ['ac','maxHp','speed','initiative','profBonus','spellAtk','spellDc','str','dex','con','int','wis','cha'].forEach(k=>{const el=$('ib-'+k);if(el)el.value='';});
+  ['str','dex','con','int','wis','cha'].forEach(k=>{const el=$('isb-'+k);if(el)el.value='';});
+  buildItemSkillInputs(null);
+  // close all sections
+  document.querySelectorAll('#ol-item .item-sec-body').forEach(b=>{b.classList.remove('open');});
+  document.querySelectorAll('#ol-item .item-sec-chev').forEach(ch=>{ch.classList.remove('open');});
+  openOverlay('ol-item');
+}
+
+function openEditItem(id){
+  const c=getChar(curId);const item=(c.items||[]).find(x=>x.id===id);if(!item)return;
+  editingItemId=id;
+  $('item-modal-title').textContent='✏️ Edit Item / Perk';
+  $('item-name').value=item.name||'';
+  $('item-type').value=item.type||'item';
+  $('item-desc').value=item.description||'';
+  const bn=item.bonuses||{};
+  ['ac','maxHp','speed','initiative','profBonus','spellAtk','spellDc','str','dex','con','int','wis','cha'].forEach(k=>{const el=$('ib-'+k);if(el)el.value=bn[k]||'';});
+  ['str','dex','con','int','wis','cha'].forEach(k=>{const el=$('isb-'+k);if(el)el.value=(bn.saves||{})[k]||'';});
+  buildItemSkillInputs(bn);
+  openOverlay('ol-item');
+}
+
+function cancelItem(){closeOverlay('ol-item');editingItemId=null;}
+
+function saveItem(){
+  const name=$('item-name').value.trim();if(!name){toast('Item name is required!');return;}
+  const bonuses={};
+  const combatKeys=['ac','maxHp','speed','initiative','profBonus','spellAtk','spellDc'];
+  const abilKeys=['str','dex','con','int','wis','cha'];
+  [...combatKeys,...abilKeys].forEach(k=>{const el=$('ib-'+k);if(el){const v=parseInt(el.value);if(!isNaN(v)&&v!==0)bonuses[k]=v;}});
+  // skill bonuses
+  const skillBonuses={};
+  SKILLS.forEach(sk=>{const el=$('iskb-'+sk.id);if(el){const v=parseInt(el.value);if(!isNaN(v)&&v!==0)skillBonuses[sk.id]=v;}});
+  if(Object.keys(skillBonuses).length)bonuses.skills=skillBonuses;
+  // save bonuses
+  const saveBonuses={};
+  abilKeys.forEach(k=>{const el=$('isb-'+k);if(el){const v=parseInt(el.value);if(!isNaN(v)&&v!==0)saveBonuses[k]=v;}});
+  if(Object.keys(saveBonuses).length)bonuses.saves=saveBonuses;
+
+  const c=getChar(curId);if(!c.items)c.items=[];
+  if(editingItemId){
+    const idx=c.items.findIndex(x=>x.id===editingItemId);
+    if(idx>=0){c.items[idx]={...c.items[idx],name,type:$('item-type').value,bonuses,description:$('item-desc').value.trim()};}
+  }else{
+    c.items.push({id:uuid(),name,type:$('item-type').value,active:true,bonuses,description:$('item-desc').value.trim()});
+  }
+  save();renderSheet();closeOverlay('ol-item');editingItemId=null;
+  toast(`✦ ${name} saved`);
 }
 
 // ── SHORT REST ────────────────────────────────────────────
@@ -904,7 +1211,6 @@ $('btn-menu').addEventListener('click',()=>{
     <div style="display:flex;flex-direction:column;gap:8px">
       <button class="btn btn-ghost" style="text-align:left;padding:13px 16px;border-radius:9px;justify-content:flex-start" onclick="this.closest('.overlay').remove();goCreate('${c.id}')">✏️ &nbsp;Edit Character</button>
       <button class="btn btn-ghost" style="text-align:left;padding:13px 16px;border-radius:9px;justify-content:flex-start" onclick="this.closest('.overlay').remove();doExport('${c.id}')">📤 &nbsp;Export / Share</button>
-      <button class="btn btn-ghost" style="text-align:left;padding:13px 16px;border-radius:9px;justify-content:flex-start" onclick="this.closest('.overlay').remove();openSettingsModal()">⚙ &nbsp;Settings</button>
       <button class="btn btn-danger" style="text-align:left;padding:13px 16px;border-radius:9px;justify-content:flex-start" onclick="this.closest('.overlay').remove();openDelete('${c.id}')">🗑 &nbsp;Delete Character</button>
       <button class="btn btn-ghost" style="text-align:left;padding:13px 16px;border-radius:9px;justify-content:flex-start" onclick="this.closest('.overlay').remove()">✕ &nbsp;Cancel</button>
     </div></div>`;
@@ -952,46 +1258,6 @@ async function decompressStr(b64){
   const bin=atob(b64);const bytes=Uint8Array.from(bin,c=>c.charCodeAt(0));
   const ds=new DecompressionStream('deflate-raw');const w=ds.writable.getWriter();w.write(bytes);w.close();
   return new TextDecoder().decode(await new Response(ds.readable).arrayBuffer());
-}
-
-// ── PDF ───────────────────────────────────────────────────
-async function handlePdf(event){
-  const file=event.target.files[0];if(!file)return;
-  const st=$('pdf-status');st.style.display='block';st.style.color='var(--gold)';
-  st.innerHTML='<span class="spinner"></span> Reading your character sheet with AI…';
-  try{
-    const base64=await new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result.split(',')[1]);r.onerror=()=>rej(new Error('Read failed'));r.readAsDataURL(file);});
-    const resp=await fetch('https://api.anthropic.com/v1/messages',{
-      method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({
-        model:'claude-sonnet-4-20250514',max_tokens:2000,
-        messages:[{role:'user',content:[
-          {type:'document',source:{type:'base64',media_type:'application/pdf',data:base64}},
-          {type:'text',text:`Read this D&D 5e character sheet and extract ALL available data. Return ONLY a valid JSON object (no markdown, no backticks, no explanation). Keys and types:
-name(str), race(str), charClass(str), subclass(str), level(num 1-20), background(str),
-maxHp(num), hitDie("d6"|"d8"|"d10"|"d12"),
-ac(num), speed(num), profBonus(num), initiativeBonus(num|null),
-str(num),dex(num),con(num),int(num),wis(num),cha(num),
-saveProfs({str:bool,dex:bool,con:bool,int:bool,wis:bool,cha:bool}),
-skills({acrobatics:0|1|2, animalHandle:0|1|2, arcana:0|1|2, athletics:0|1|2, deception:0|1|2, history:0|1|2, insight:0|1|2, intimidation:0|1|2, investigation:0|1|2, medicine:0|1|2, nature:0|1|2, perception:0|1|2, performance:0|1|2, persuasion:0|1|2, religion:0|1|2, sleightHand:0|1|2, stealth:0|1|2, survival:0|1|2}),
-spellAbility("int"|"wis"|"cha"|null),
-maxSpellSlots([9 numbers for levels 1-9]),
-spellAtkOverride(num|null).
-Return ONLY the JSON.`}
-        ]}]
-      })
-    });
-    if(!resp.ok){const txt=await resp.text();throw new Error(`API ${resp.status}: ${txt.slice(0,120)}`);}
-    const data=await resp.json();
-    const text=(data.content||[]).map(i=>i.text||'').join('');
-    const clean=text.replace(/```json|```/g,'').trim();
-    fillCreateForm(JSON.parse(clean),true);
-    st.style.color='var(--heal)';st.innerHTML='✅ Sheet imported! Review the fields below and save.';
-  }catch(e){
-    st.style.color='var(--ember)';st.innerHTML=`❌ Could not read PDF: ${e.message}. Use a text-based PDF (not a scan), or fill in manually.`;
-    console.error('PDF import:',e);
-  }
-  event.target.value='';
 }
 
 // ── CREATE FORM ───────────────────────────────────────────
@@ -1059,7 +1325,6 @@ function fillCreateForm(c,fromPdf=false){
   if(spellsOn)buildSpellInputs(c?.maxSpellSlots);
   if(c?.spellAbility)set('f-spell-ability',c.spellAbility);
   if(c?.spellAtkOverride!=null)set('f-spell-atk',c.spellAtkOverride);
-  $('pdf-status').style.display='none';
 }
 
 // ── SAVE CHAR ─────────────────────────────────────────────
@@ -1103,6 +1368,8 @@ function saveChar(){
     conditions:existing?.conditions||[],
     deathSaveSuccesses:existing?.deathSaveSuccesses||0,deathSaveFailures:existing?.deathSaveFailures||0,
     notes:existing?.notes||'',lastUsed:existing?.lastUsed||Date.now(),createdAt:existing?.createdAt||Date.now(),
+    items:existing?.items||[],
+    heroicInspiration:existing?.heroicInspiration||false,
   };
   if(!existing)chars.push(c);else chars[chars.findIndex(x=>x.id===editId)]=c;
   save();toast(existing?`✦ ${name} updated!`:`✦ ${name} created!`);
@@ -1119,7 +1386,7 @@ let toastT;
 function toast(msg){const el=$('toast');el.textContent=msg;el.classList.add('show');clearTimeout(toastT);toastT=setTimeout(()=>el.classList.remove('show'),2400);}
 
 // ── INIT ──────────────────────────────────────────────────
-loadSettings();load();renderList();
+load();renderList();
 </script>
 </body>
 </html>
