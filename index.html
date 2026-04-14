@@ -161,9 +161,11 @@
     .passive-lbl{color:var(--muted);font-style:italic}
     .passive-val{font-family:'Cinzel',serif;font-weight:700;color:var(--text)}
 
-    /* REST BAR */
+    /* REST BAR / ACTION BAR */
     .rest-bar{position:fixed;bottom:0;left:0;right:0;background:var(--surface);border-top:1px solid var(--border);padding:10px 14px;display:flex;gap:8px;z-index:10}
     .rest-bar .btn{flex:1}
+    .create-action-bar{position:fixed;bottom:0;left:0;right:0;background:var(--surface);border-top:1px solid var(--border);padding:10px 14px;display:flex;gap:8px;z-index:10}
+    .create-action-bar .btn{flex:1}
 
     /* CREATE FORM */
     .form-group{margin-bottom:14px}
@@ -450,10 +452,13 @@
       <div id="slot-inputs"></div>
     </div>
 
-    <div style="display:flex;gap:8px;margin-top:22px;padding-bottom:30px">
-      <button class="btn btn-ghost" onclick="cancelCreate()" style="flex:1">Cancel</button>
-      <button class="btn btn-gold" onclick="saveChar()" style="flex:2">Save Character</button>
-    </div>
+    <div style="height:20px"></div>
+  </div>
+
+  <!-- Floating save/cancel bar -->
+  <div class="create-action-bar">
+    <button class="btn btn-ghost" onclick="cancelCreate()" style="flex:1">Cancel</button>
+    <button class="btn btn-gold" onclick="saveChar()" style="flex:2">Save Character</button>
   </div>
 </div>
 
@@ -878,7 +883,7 @@ function applySR(){
 function applyLR(){
   const c=getChar(curId);c.currentHp=c.maxHp;c.tempHp=0;
   if(c.maxSpellSlots)c.usedSpellSlots=Array(9).fill(0);
-  const rec=Math.max(1,Math.floor((c.level||1)/2));c.hitDiceUsed=Math.max(0,(c.hitDiceUsed||0)-rec);
+  c.hitDiceUsed=0; // 2024 rules: all hit dice reset on long rest
   c.deathSaveSuccesses=0;c.deathSaveFailures=0;
   c.conditions=(c.conditions||[]).filter(x=>x!=='unconscious');
   save();renderSheet();closeOverlay('ol-long-rest');toast('☀ Long rest — fully restored!');
